@@ -14,7 +14,7 @@ import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.impl.util.annotation.AnnotationScanner
 import rocks.clanattack.util.log.Logger
 import rocks.clanattack.util.minecraft.listener.Listen
-import rocks.clanattack.util.minecraft.task.TaskService
+import rocks.clanattack.util.task.TaskService
 import kotlin.reflect.KClass
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.isSuperclassOf
@@ -30,7 +30,7 @@ object ListenerHandler {
     }
 
     fun load() {
-        find<TaskService>().execute(asynchronous = true) {
+        find<TaskService>().execute {
             find<Logger>().info("Loading listeners...")
             AnnotationScanner.findMethods(Listen::class).forEach {
                 val declaringClass = it.declaringClass

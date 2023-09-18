@@ -1,24 +1,23 @@
-package rocks.clanattack.impl.util.minecraft.task
+package rocks.clanattack.impl.util.task.attached
 
 import org.bukkit.scheduler.BukkitTask
-import rocks.clanattack.util.minecraft.task.Task
+import rocks.clanattack.util.task.Task
+import rocks.clanattack.util.task.TaskConfig
 import java.lang.IllegalStateException
 
-class TaskImpl : Task {
+class AttachedTaskImpl(override val config: TaskConfig) : Task {
 
     var task: BukkitTask? = null
-
     private val _task: BukkitTask
         get() = task ?: throw IllegalStateException("Runnable must be initialized to run")
 
     override val id: Int
         get() = _task.taskId
 
-    override val synchronous: Boolean
-        get() = _task.isSync
-
     override val cancelled: Boolean
         get() = _task.isCancelled
+
+    override var timesExecuted = 0u
 
     override fun cancel() = _task.cancel()
 
