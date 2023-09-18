@@ -4,7 +4,7 @@ plugins {
     `java-library`
     kotlin("jvm") version "1.7.22"
     id("io.papermc.paperweight.userdev") version "1.5.5"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
+    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
 group = "rocks.clanattack"
@@ -14,7 +14,7 @@ bukkit {
     main = "rocks.clanattack.impl.entry.Boot"
     version = "0.0.0"
     apiVersion = "1.20"
-    name = "ClanAttack Rocks (Core-API)"
+    name = "ClanAttack Rocks - Core"
 
     authors = listOf("CheeseTastisch")
     libraries = listOf(
