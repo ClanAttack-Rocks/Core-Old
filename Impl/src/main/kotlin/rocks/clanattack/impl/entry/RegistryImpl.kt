@@ -1,5 +1,6 @@
 package rocks.clanattack.impl.entry
 
+import org.bukkit.plugin.Plugin
 import rocks.clanattack.entry.Registry
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
@@ -7,18 +8,21 @@ import kotlin.reflect.cast
 lateinit var registryImpl: RegistryImpl
     private set
 
-class RegistryImpl : Registry {
-
-    init {
-        registryImpl = this
-
-        set(Registry::class, this)
-    }
+class RegistryImpl(plugin: Plugin) : Registry {
 
     private val _instances = mutableMapOf<KClass<*>, Any>()
 
     override val instances: Map<KClass<*>, Any>
         get() = _instances.toMap()
+
+    init {
+        plugin.logger.info("Initializing registry...")
+
+        registryImpl = this
+
+        set(Registry::class, this)
+        set(Plugin::class, plugin)
+    }
 
     override fun <T : Any> get(klass: KClass<T>): T? {
         val instance = _instances[klass] ?: return null

@@ -8,3 +8,5 @@ pluginManagement {
 rootProject.name = "Core"
 include("Api")
 include("Impl")
+include("Library")
+include("ApiBundle")

@@ -26,7 +26,7 @@ object ListenerHandler {
         private set
 
     fun block() {
-        Bukkit.getPluginManager().registerEvents(PlayerLoginListener(), find<JavaPlugin>())
+        Bukkit.getPluginManager().registerEvents(PlayerLoginListener(), find())
     }
 
     fun load() {

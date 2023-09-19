@@ -4,39 +4,15 @@ plugins {
     `java-library`
     kotlin("jvm") version "1.7.22"
     id("io.papermc.paperweight.userdev") version "1.5.5"
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
 }
 
 group = "rocks.clanattack"
 version = "0.0.0"
 
-bukkit {
-    main = "rocks.clanattack.impl.entry.Boot"
-    version = "0.0.0"
-    apiVersion = "1.20"
-    name = "ClanAttack Rocks - Core"
-
-    authors = listOf("CheeseTastisch")
-    libraries = listOf(
-        "com.fasterxml.jackson.core:jackson-databind:2.15.2",
-        "com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2",
-        "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2",
-
-        "org.jetbrains.kotlin:kotlin-reflect:1.7.22",
-        "org.reflections:reflections:0.9.12"
-    )
-}
-
-dependencies {
-    implementation(project(":Api"))
-    implementation(project(":Impl"))
-}
-
 allprojects {
     apply(plugin = "kotlin")
     apply(plugin = "java-library")
     apply(plugin = "io.papermc.paperweight.userdev")
-    apply(plugin = "net.minecrell.plugin-yml.bukkit")
 
     repositories {
         mavenCentral()
@@ -68,15 +44,6 @@ allprojects {
             filteringCharset = Charsets.UTF_8.name()
         }
 
-        jar {
-            manifest {
-                attributes.clear()
-            }
-
-            from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        }
-
         withType<JavaCompile> {
             options.encoding = Charsets.UTF_8.name()
         }
@@ -88,4 +55,16 @@ allprojects {
             }
         }
     }
+}
+
+tasks {
+    register("buildImpl") {
+        dependsOn(":Api:build", ":Impl:build")
+    }
+
+//    create("buildBundle") {
+//        dependsOn(":Api:build")
+//        dependsOn(":Library:build")
+//        dependsOn(":ApiBundle:build")
+//    }
 }
