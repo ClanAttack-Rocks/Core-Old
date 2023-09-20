@@ -7,6 +7,7 @@ import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections
+import org.reflections.scanners.SubTypesScanner
 import org.reflections.util.ConfigurationBuilder
 import rocks.clanattack.entry.Registry
 import rocks.clanattack.entry.find
@@ -30,7 +31,9 @@ object ListenerHandler {
     }
 
     fun load() {
-        find<TaskService>().execute {
+        find<TaskService>().execute({
+            detached = true
+        }) {
             find<Logger>().info("Loading listeners...")
             AnnotationScanner.findMethods(Listen::class).forEach {
                 val declaringClass = it.declaringClass
@@ -60,8 +63,11 @@ object ListenerHandler {
             val execute = EventExecutor { _, event -> fireEvent(event) }
             var counter = 0
 
-            Reflections(ConfigurationBuilder().addClassLoaders(find<Loader>().classLoaders.keys))
-                .getSubTypesOf(Event::class.java)
+            Reflections(
+                ConfigurationBuilder()
+                    .addClassLoaders(find<Loader>().classLoaders.keys)
+                    .setScanners(SubTypesScanner())
+            ).getSubTypesOf(Event::class.java)
                 .asSequence()
                 .map { it.kotlin }
                 .filter { !it.isAbstract }

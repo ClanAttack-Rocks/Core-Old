@@ -2,13 +2,13 @@ package rocks.clanattack.impl.util.annotation
 
 import org.reflections.Reflections
 import org.reflections.scanners.MethodAnnotationsScanner
+import org.reflections.scanners.SubTypesScanner
 import org.reflections.scanners.TypeAnnotationsScanner
 import org.reflections.util.ClasspathHelper
 import org.reflections.util.ConfigurationBuilder
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.plugin.Loader
 import kotlin.reflect.KClass
-import kotlin.reflect.jvm.kotlinFunction
 
 object AnnotationScanner {
 
@@ -17,7 +17,7 @@ object AnnotationScanner {
             ConfigurationBuilder()
                 .addClassLoader(classLoader)
                 .setUrls(ClasspathHelper.forPackage(basePackage, classLoader))
-                .setScanners(TypeAnnotationsScanner())
+                .setScanners(TypeAnnotationsScanner(), SubTypesScanner())
         ).getTypesAnnotatedWith(annotation.java)
             .map { it.kotlin }
 
@@ -31,7 +31,7 @@ object AnnotationScanner {
                         classLoader
                     )
                 }.flatten())
-                .setScanners(TypeAnnotationsScanner())
+                .setScanners(TypeAnnotationsScanner(), SubTypesScanner())
         ).getTypesAnnotatedWith(annotation.java)
             .map { it.kotlin }
 
@@ -40,7 +40,7 @@ object AnnotationScanner {
             ConfigurationBuilder()
                 .addClassLoader(classLoader)
                 .setUrls(ClasspathHelper.forPackage(basePackage, classLoader))
-                .setScanners(MethodAnnotationsScanner())
+                .setScanners(MethodAnnotationsScanner(), SubTypesScanner())
         ).getMethodsAnnotatedWith(annotation.java)
             .filterNotNull()
 
@@ -54,7 +54,7 @@ object AnnotationScanner {
                         classLoader
                     )
                 }.flatten())
-                .setScanners(MethodAnnotationsScanner())
+                .setScanners(MethodAnnotationsScanner(), SubTypesScanner())
         ).getMethodsAnnotatedWith(annotation.java)
             .filterNotNull()
 
