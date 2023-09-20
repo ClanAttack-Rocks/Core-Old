@@ -7,5 +7,4 @@ version = "0.0.0"
 
 dependencies {
     compileOnlyApi(project(":Library"))
-    api(kotlin("reflect"))
 }
