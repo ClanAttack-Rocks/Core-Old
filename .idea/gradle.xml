@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/ApiBundle" />
             <option value="$PROJECT_DIR$/Impl" />
             <option value="$PROJECT_DIR$/Library" />
+            <option value="$PROJECT_DIR$/Test" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -59,6 +59,6 @@ allprojects {
 
 tasks {
     register("buildAll") {
-        dependsOn(":Impl:build", ":ApiBundle:build")
+        dependsOn(":Impl:build", ":ApiBundle:build", ":Test:build")
     }
 }
