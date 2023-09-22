@@ -6,9 +6,20 @@ dependencies {
     api(project(":Library"))
 }
 
-tasks.jar {
-    dependsOn(":Api:build", ":Library:build")
+tasks {
+    jar {
+        dependsOn(":Api:build", ":Library:build")
 
-    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    build {
+        doLast {
+            project(":ApiBundle").buildDir.resolve("libs")
+                .listFiles()
+                ?.firstOrNull { !it.nameWithoutExtension.endsWith("-dev") }
+                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("Api.jar"), true)
+        }
+    }
 }
