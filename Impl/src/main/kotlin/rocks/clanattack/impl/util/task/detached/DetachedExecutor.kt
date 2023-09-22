@@ -14,7 +14,12 @@ object DetachedExecutor : CoroutineScope {
 
     override val coroutineContext = object  : CoroutineDispatcher() {
 
-        override fun dispatch(context: CoroutineContext, block: Runnable) = threadPool.execute(block)
+        override fun dispatch(context: CoroutineContext, block: Runnable) {
+            if (threadPool.isShutdown || threadPool.isTerminated)
+                throw IllegalStateException("Cannot dispatch task to shutdown thread pool.")
+
+            threadPool.execute(block)
+        }
     }
 
     fun stop() {
