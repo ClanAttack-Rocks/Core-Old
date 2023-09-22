@@ -18,7 +18,7 @@ class Boot : JavaPlugin() {
 
         try {
             Reflection.setRegistry(registry)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             this.logger.severe("Could not set the registry.")
         }
 

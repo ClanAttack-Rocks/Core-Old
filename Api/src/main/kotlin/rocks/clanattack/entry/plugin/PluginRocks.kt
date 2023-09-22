@@ -3,11 +3,13 @@ package rocks.clanattack.entry.plugin
 import org.bukkit.plugin.java.JavaPlugin
 import rocks.clanattack.entry.find
 import rocks.clanattack.util.log.Logger
+import java.lang.Exception
 
 /**
  * A [PluginRocks] is a Bukkit plugin that uses the ClanAttack API.
  *
- * The plugin has, other than a standard bukkit plugin no load method.
+ * The plugin should only be used for registering its class loader.
+ * Every other action should be done via services, entry and exit points.
  */
 open class PluginRocks : JavaPlugin() {
 
@@ -25,35 +27,4 @@ open class PluginRocks : JavaPlugin() {
             find<Logger>().error("Could not register the plugin ${this.name}", e)
         }
     }
-
-    override fun onEnable() {
-        try {
-            enable()
-        } catch (e: Exception) {
-            find<Logger>().error("Cloud not enable the plugin ${this.name}", e)
-        }
-    }
-
-    override fun onDisable() {
-        try {
-            disable()
-        } catch (e: Exception) {
-            find<Logger>().error("Cloud not disable the plugin ${this.name}", e)
-        }
-    }
-
-    /**
-     * Called when the [PluginRocks] is enabled.
-     */
-    open fun enable() {
-
-    }
-
-    /**
-     * Called when the [PluginRocks] is disabled.
-     */
-    open fun disable() {
-
-    }
-
 }

@@ -9,6 +9,7 @@ import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.entry.registryImpl
 import rocks.clanattack.impl.java.Reflection
 import rocks.clanattack.impl.util.annotation.AnnotationScanner
+import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
 import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
@@ -118,7 +119,10 @@ object ServiceHandler {
                         Reflection.setServiceState(info.implementation, true)
                         enabled++
                     } catch (e: Exception) {
-                        find<Logger>().error("An error occurred while enabling ${definition.qualifiedName}.", e)
+                        find<Logger>().error(
+                            "An error occurred while enabling ${definition.qualifiedName}.",
+                            e.invocationCause
+                        )
                     }
 
                     modified.add(definition)
@@ -162,7 +166,10 @@ object ServiceHandler {
                         Reflection.setServiceState(info.implementation, false)
                         disabled++
                     } catch (e: Exception) {
-                        find<Logger>().error("An error occurred while disabling ${definition.qualifiedName}.", e)
+                        find<Logger>().error(
+                            "An error occurred while disabling ${definition.qualifiedName}.",
+                            e.invocationCause
+                        )
                     }
 
                     modified.add(definition)

@@ -8,6 +8,7 @@ import rocks.clanattack.entry.point.ExitPoint
 import rocks.clanattack.entry.registry
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.impl.util.annotation.AnnotationScanner
+import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
 import java.lang.reflect.Method
 
@@ -36,8 +37,8 @@ object PointHandler {
     }
 
     private fun callEntryPoints(annotated: List<Method>) = annotated.filter {
-        if (it.returnType.kotlin != Unit::class) {
-            find<Logger>().error("The method ${getName(it)} does not return Unit.")
+        if (it.returnType.kotlin != Void::class) {
+            find<Logger>().error("The method ${getName(it)} does return ${it.returnType.kotlin.simpleName}, should be Unit/Void.")
             return@filter false
         }
 
@@ -56,14 +57,14 @@ object PointHandler {
             try {
                 it.invoke(instance)
             } catch (e: Exception) {
-                find<Logger>().error("Could not call entry point ${getName(it)}", e)
+                find<Logger>().error("Could not call entry point ${getName(it)}", e.invocationCause)
                 return@filter false
             }
         } else if (it.parameters.size == 1 && it.parameters[0].type.kotlin == Registry::class) {
             try {
                 it.invoke(instance, registry)
             } catch (e: Exception) {
-                find<Logger>().error("Could not call entry point ${getName(it)}", e)
+                find<Logger>().error("Could not call entry point ${getName(it)}", e.invocationCause)
                 return@filter false
             }
         } else {
@@ -82,8 +83,8 @@ object PointHandler {
 
         val amount = AnnotationScanner.findMethods(ExitPoint::class)
             .filter {
-                if (it.returnType.kotlin != Unit::class) {
-                    find<Logger>().error("The method ${getName(it)} does not return Unit.")
+                if (it.returnType.kotlin != Void::class) {
+                    find<Logger>().error("The method ${getName(it)} does return ${it.returnType.kotlin.simpleName}, should be Unit/Void.")
                     return@filter false
                 }
 
@@ -102,14 +103,14 @@ object PointHandler {
                     try {
                         it.invoke(instance)
                     } catch (e: Exception) {
-                        find<Logger>().error("Could not call exit point ${getName(it)}", e)
+                        find<Logger>().error("Could not call exit point ${getName(it)}", e.invocationCause)
                         return@filter false
                     }
                 } else if (it.parameters.size == 1 && it.parameters[0].type.kotlin == Registry::class) {
                     try {
                         it.invoke(instance, registry)
                     } catch (e: Exception) {
-                        find<Logger>().error("Could not call exit point ${getName(it)}", e)
+                        find<Logger>().error("Could not call exit point ${getName(it)}", e.invocationCause)
                         return@filter false
                     }
                 } else {
