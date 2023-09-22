@@ -17,13 +17,16 @@ bukkit {
 
 dependencies {
     api(project(":Api"))
+    api(kotlin("reflect"))
 }
 
 tasks {
     jar {
         dependsOn(":Api:build")
 
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+        from(configurations.runtimeClasspath.get()
+            .filter { !it.name.contains("kotlin-stdlib") }
+            .map { if (it.isDirectory) it else zipTree(it) })
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
