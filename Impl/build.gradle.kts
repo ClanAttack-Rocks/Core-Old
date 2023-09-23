@@ -17,7 +17,6 @@ bukkit {
 
 dependencies {
     api(project(":Api"))
-    api(kotlin("reflect"))
 }
 
 tasks {

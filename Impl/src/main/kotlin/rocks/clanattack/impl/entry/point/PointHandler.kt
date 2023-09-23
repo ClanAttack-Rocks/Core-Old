@@ -1,17 +1,15 @@
 package rocks.clanattack.impl.entry.point
 
-import rocks.clanattack.entry.Registry
+import rock.clanattack.java.AnnotationScanner
+import rock.clanattack.java.MethodHelper
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.entry.point.EntryPoint
 import rocks.clanattack.entry.point.ExitPoint
 import rocks.clanattack.entry.registry
-import rocks.clanattack.entry.service.Register
-import rocks.clanattack.impl.util.reflection.*
 import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
 import java.lang.reflect.Method
-import kotlin.reflect.KFunction
 
 object PointHandler {
 
@@ -25,7 +23,7 @@ object PointHandler {
 
     fun callEntryPoints() {
         find<Logger>().info("Calling entry points...")
-        val amount = callEntryPoints(EntryPoint::class.annotatedMethods)
+        val amount = callEntryPoints(AnnotationScanner.getAnnotatedMethods(EntryPoint::class.java))
         find<Logger>().info("Called $amount entry points.")
 
         initialRegister = true
@@ -33,21 +31,22 @@ object PointHandler {
 
     private fun callEntryPoints(classLoader: ClassLoader, basePackage: String) {
         find<Logger>().info("Calling entry points from $basePackage...")
-        val amount = callEntryPoints(EntryPoint::class.getAnnotatedMethods(classLoader, basePackage))
+        val amount =
+            callEntryPoints(AnnotationScanner.getAnnotatedMethods(EntryPoint::class.java, classLoader, basePackage))
         find<Logger>().info("Called $amount entry points from $basePackage.")
     }
 
-    private fun callEntryPoints(annotated: List<KFunction<*>>) = annotated.filter {
-        if (it.returnType != Void::class) {
-            find<Logger>().error("Entrypoint ${it.qualifiedName} doesn't return Unit/Void.")
+    private fun callEntryPoints(annotated: List<Method>) = annotated.filter {
+        if (it.returnType != Void::class.java) {
+            find<Logger>().error("Entrypoint ${MethodHelper.getFullName(it)} doesn't return Unit/Void.")
             return@filter false
         }
 
         try {
-            it.unitOmitCall(registry)
+            MethodHelper.call(it, registry)
             true
         } catch (e: Exception) {
-            find<Logger>().error("Couldn't call entry point ${it.qualifiedName}", e.invocationCause)
+            find<Logger>().error("Couldn't call entry point ${MethodHelper.getFullName(it)}", e.invocationCause)
             false
         }
     }.count()
@@ -55,19 +54,18 @@ object PointHandler {
     fun callExitPoints() {
         find<Logger>().info("Calling exit points...")
 
-        val amount =ExitPoint::class
-            .annotatedMethods
+        val amount = AnnotationScanner.getAnnotatedMethods(ExitPoint::class.java)
             .filter {
-                if (it.returnType != Void::class) {
-                    find<Logger>().error("Exit point ${it.qualifiedName} doesn't return Unit/Void.")
+                if (it.returnType != Void::class.java) {
+                    find<Logger>().error("Exit point ${MethodHelper.getFullName(it)} doesn't return Unit/Void.")
                     return@filter false
                 }
 
                 try {
-                    it.unitOmitCall(registry)
+                    MethodHelper.call(it, registry)
                     true
                 } catch (e: Exception) {
-                    find<Logger>().error("Couldn't call exit point ${it.qualifiedName}", e.invocationCause)
+                    find<Logger>().error("Couldn't call exit point ${MethodHelper.getFullName(it)}", e.invocationCause)
                     false
                 }
             }.count()

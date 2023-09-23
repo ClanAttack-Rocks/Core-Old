@@ -1,19 +1,16 @@
 package rocks.clanattack.impl.entry.service
 
+import rock.clanattack.java.AnnotationScanner
+import rock.clanattack.java.ServiceHelper
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.entry.registry
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.Service
 import rocks.clanattack.entry.service.ServiceImplementation
-import rocks.clanattack.impl.util.reflection.annotatedClasses
-import rocks.clanattack.impl.util.reflection.getAnnotatedClasses
-import rocks.clanattack.impl.util.reflection.setEnabled
 import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
 import kotlin.reflect.KClass
-import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.isSubclassOf
 
 data class ServiceInformation(
     val implementation: ServiceImplementation,
@@ -36,7 +33,7 @@ object ServiceHandler {
 
     fun registerServices() {
         find<Logger>().info("Registering services...")
-        val amount = registerServices(Register::class.annotatedClasses)
+        val amount = registerServices(AnnotationScanner.getAnnotatedClasses(Register::class.java))
         find<Logger>().info("Registered $amount services.")
 
         initialRegister = true
@@ -44,35 +41,37 @@ object ServiceHandler {
 
     private fun registerServices(classLoader: ClassLoader, basePackage: String) {
         find<Logger>().info("Registering services from $basePackage...")
-        val amount = registerServices(Register::class.getAnnotatedClasses(classLoader, basePackage))
+        val amount =
+            registerServices(AnnotationScanner.getAnnotatedClasses(Register::class.java, classLoader, basePackage))
         find<Logger>().info("Registered $amount services from $basePackage.")
     }
 
-    private fun registerServices(annotated: List<KClass<out Any>>) = annotated.filter {
-        val annotation = it.findAnnotation<Register>() ?: return@filter false
-        if (!it.isSubclassOf(ServiceImplementation::class)) {
-            find<Logger>().error("The service ${it.qualifiedName} doesn't implement ServiceImplementation")
-            return@filter false
-        }
+    private fun registerServices(annotated: List<Class<*>>) = annotated
+        .filter {
+            val annotation = it.getDeclaredAnnotation(Register::class.java) ?: return@filter false
+            if (!ServiceImplementation::class.java.isAssignableFrom(it)) {
+                find<Logger>().error("The service ${it.name} doesn't implement ServiceImplementation")
+                return@filter false
+            }
 
-        val definition = annotation.definition
-        if (!it.isSubclassOf(definition)) {
-            find<Logger>().error(
-                "The service ${it.qualifiedName} doesn't implement its definition (${definition.qualifiedName})"
-            )
-            return@filter false
-        }
+            val definition = annotation.definition
+            if (!definition.java.isAssignableFrom(it)) {
+                find<Logger>().error(
+                    "The service ${it.name} doesn't implement its definition (${definition.qualifiedName})"
+                )
+                return@filter false
+            }
 
-        val instance = try {
-            registry.create(it)
-        } catch (e: IllegalArgumentException) {
-            find<Logger>().error("The service ${it.qualifiedName} couldn't be registered", e)
-            return@filter false
-        }
+            val instance = try {
+                registry.create(it.kotlin)
+            } catch (e: IllegalArgumentException) {
+                find<Logger>().error("The service ${it.name} couldn't be registered", e)
+                return@filter false
+            }
 
-        services[definition] = ServiceInformation(instance as ServiceImplementation, annotation)
-        true
-    }
+            services[definition] = ServiceInformation(instance as ServiceImplementation, annotation)
+            true
+        }
         .count()
 
     fun enableServices() {
@@ -101,7 +100,7 @@ object ServiceHandler {
                 if (info.annotation.depends.all { services[it]?.implementation?.enabled == true }) {
                     try {
                         info.implementation.enable()
-                        info.implementation.setEnabled(true)
+                        ServiceHelper.setEnabled(info.implementation, true)
                         enabled++
                     } catch (e: Exception) {
                         find<Logger>().error(
@@ -148,7 +147,7 @@ object ServiceHandler {
                 if (info.annotation.depends.all { services[it]?.implementation?.enabled != true }) {
                     try {
                         info.implementation.disable()
-                        info.implementation.setEnabled(false)
+                        ServiceHelper.setEnabled(info.implementation, false)
                         disabled++
                     } catch (e: Exception) {
                         find<Logger>().error(
