@@ -1,15 +1,12 @@
 package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.java.JavaPlugin
-import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.impl.entry.plugin.LoaderImpl
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler
 import rocks.clanattack.impl.util.log.LoggerImpl
 import rocks.clanattack.impl.util.minecraft.listener.ListenerHandler
-import rocks.clanattack.util.log.Logger
-import kotlin.reflect.jvm.javaField
-import rocks.clanattack.entry.registry as tlRegistry
+import rocks.clanattack.impl.util.reflection.setAsTopLevel
 
 @Suppress("unused")
 class Boot : JavaPlugin() {
@@ -18,17 +15,16 @@ class Boot : JavaPlugin() {
         val registry = RegistryImpl(this)
 
         try {
-            ::tlRegistry.javaField
-                ?.also { it.isAccessible = true }
-                ?.also { it.set(null, registry) }
-                ?.also { it.isAccessible = false }
+            registry.setAsTopLevel()
         } catch (_: Exception) {
             this.logger.severe("Could not set the registry.")
+            this.server.shutdown()
+            return
         }
 
-        registry.set(Logger::class, LoggerImpl(this.logger))
+        registry.add(LoggerImpl(this.logger))
 
-        val loader = registry.create(Loader::class, LoaderImpl::class)
+        val loader = registry.create(LoaderImpl::class)
         loader.register(this.classLoader, "rocks.clanattack.impl")
     }
 

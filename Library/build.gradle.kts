@@ -21,7 +21,7 @@ dependencies {
 
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     api(kotlin("reflect"))
-    api("org.reflections:reflections:0.9.12")
+    api("io.github.classgraph:classgraph:4.8.162")
 }
 
 tasks{

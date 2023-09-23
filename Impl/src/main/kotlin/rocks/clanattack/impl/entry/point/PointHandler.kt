@@ -7,10 +7,11 @@ import rocks.clanattack.entry.point.EntryPoint
 import rocks.clanattack.entry.point.ExitPoint
 import rocks.clanattack.entry.registry
 import rocks.clanattack.entry.service.Register
-import rocks.clanattack.impl.util.annotation.AnnotationScanner
+import rocks.clanattack.impl.util.reflection.*
 import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
 import java.lang.reflect.Method
+import kotlin.reflect.KFunction
 
 object PointHandler {
 
@@ -24,7 +25,7 @@ object PointHandler {
 
     fun callEntryPoints() {
         find<Logger>().info("Calling entry points...")
-        val amount = callEntryPoints(AnnotationScanner.findMethods(EntryPoint::class))
+        val amount = callEntryPoints(EntryPoint::class.annotatedMethods)
         find<Logger>().info("Called $amount entry points.")
 
         initialRegister = true
@@ -32,100 +33,46 @@ object PointHandler {
 
     private fun callEntryPoints(classLoader: ClassLoader, basePackage: String) {
         find<Logger>().info("Calling entry points from $basePackage...")
-        val amount = callEntryPoints(AnnotationScanner.findMethods(Register::class, classLoader, basePackage))
+        val amount = callEntryPoints(EntryPoint::class.getAnnotatedMethods(classLoader, basePackage))
         find<Logger>().info("Called $amount entry points from $basePackage.")
     }
 
-    private fun callEntryPoints(annotated: List<Method>) = annotated.filter {
-        if (it.returnType.kotlin != Void::class) {
-            find<Logger>().error("The method ${getName(it)} does return ${it.returnType.kotlin.simpleName}, should be Unit/Void.")
+    private fun callEntryPoints(annotated: List<KFunction<*>>) = annotated.filter {
+        if (it.returnType != Void::class) {
+            find<Logger>().error("Entrypoint ${it.qualifiedName} doesn't return Unit/Void.")
             return@filter false
         }
 
-        val declaringClass = it.declaringClass
-        val instance = try {
-            registry.getOrCreate(declaringClass.kotlin)
-        } catch (_: Exception) {
-            find<Logger>().error(
-                "Could not create instance of ${declaringClass.name} " +
-                        "(required for entry point ${getName(it)})"
-            )
-            return@filter false
+        try {
+            it.unitOmitCall(registry)
+            true
+        } catch (e: Exception) {
+            find<Logger>().error("Couldn't call entry point ${it.qualifiedName}", e.invocationCause)
+            false
         }
-
-        if (it.parameters.isEmpty()) {
-            try {
-                it.invoke(instance)
-            } catch (e: Exception) {
-                find<Logger>().error("Could not call entry point ${getName(it)}", e.invocationCause)
-                return@filter false
-            }
-        } else if (it.parameters.size == 1 && it.parameters[0].type.kotlin == Registry::class) {
-            try {
-                it.invoke(instance, registry)
-            } catch (e: Exception) {
-                find<Logger>().error("Could not call entry point ${getName(it)}", e.invocationCause)
-                return@filter false
-            }
-        } else {
-            find<Logger>().error(
-                "The method ${getName(it)} must either have no parameters or " +
-                        "a single Registry parameter."
-            )
-            return@filter false
-        }
-
-        true
     }.count()
 
     fun callExitPoints() {
         find<Logger>().info("Calling exit points...")
 
-        val amount = AnnotationScanner.findMethods(ExitPoint::class)
+        val amount =ExitPoint::class
+            .annotatedMethods
             .filter {
-                if (it.returnType.kotlin != Void::class) {
-                    find<Logger>().error("The method ${getName(it)} does return ${it.returnType.kotlin.simpleName}, should be Unit/Void.")
+                if (it.returnType != Void::class) {
+                    find<Logger>().error("Exit point ${it.qualifiedName} doesn't return Unit/Void.")
                     return@filter false
                 }
 
-                val declaringClass = it.declaringClass
-                val instance = try {
-                    registry.getOrCreate(declaringClass.kotlin)
-                } catch (_: Exception) {
-                    find<Logger>().error(
-                        "Could not create instance of ${declaringClass.name} " +
-                                "(required for exit point ${getName(it)})"
-                    )
-                    return@filter false
+                try {
+                    it.unitOmitCall(registry)
+                    true
+                } catch (e: Exception) {
+                    find<Logger>().error("Couldn't call exit point ${it.qualifiedName}", e.invocationCause)
+                    false
                 }
-
-                if (it.parameters.isEmpty()) {
-                    try {
-                        it.invoke(instance)
-                    } catch (e: Exception) {
-                        find<Logger>().error("Could not call exit point ${getName(it)}", e.invocationCause)
-                        return@filter false
-                    }
-                } else if (it.parameters.size == 1 && it.parameters[0].type.kotlin == Registry::class) {
-                    try {
-                        it.invoke(instance, registry)
-                    } catch (e: Exception) {
-                        find<Logger>().error("Could not call exit point ${getName(it)}", e.invocationCause)
-                        return@filter false
-                    }
-                } else {
-                    find<Logger>().error(
-                        "The method ${getName(it)} must either have no parameters or " +
-                                "a single Registry parameter."
-                    )
-                    return@filter false
-                }
-
-                true
             }.count()
 
         find<Logger>().info("Called $amount exit points.")
     }
 
-    private fun getName(method: Method) = "${method.declaringClass.name}#${method.name}"
 }

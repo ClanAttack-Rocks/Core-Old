@@ -2,6 +2,7 @@ package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.Plugin
 import rocks.clanattack.entry.Registry
+import rocks.clanattack.impl.util.reflection.create
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
 
@@ -10,71 +11,39 @@ lateinit var registryImpl: RegistryImpl
 
 class RegistryImpl(plugin: Plugin) : Registry {
 
-    private val _instances = mutableMapOf<KClass<*>, Any>()
+    val _instances = mutableListOf<Any>()
 
-    override val instances: Map<KClass<*>, Any>
-        get() = _instances.toMap()
+    override val instances: List<Any>
+        get() = _instances.toList()
 
     init {
         plugin.logger.info("Initializing registry...")
 
         registryImpl = this
 
-        set(Registry::class, this)
-        set(Plugin::class, plugin)
+        add(this)
+        add(plugin)
+
+        plugin.logger.info("Initialized registry.")
     }
 
     override fun <T : Any> get(klass: KClass<T>): T? {
-        val instance = _instances[klass] ?: return null
-
-        if (!klass.isInstance(instance)) throw IllegalStateException(
-            "The instance of ${klass.simpleName} " +
-                    "is of type ${instance::class.simpleName}, " +
-                    "witch is not a subtype of ${klass.simpleName}."
-        )
-
-        return klass.cast(instance)
+        return _instances.find { klass.isInstance(it) }
+            ?.let { klass.cast(it) }
     }
 
-    override fun <T : Any> create(klass: KClass<T>, register: Boolean): T {
-        if (klass in _instances) throw IllegalArgumentException("The class ${klass.simpleName} is already registered.")
+    override fun <T : Any> create(klass: KClass<T>): T {
+        if (_instances.any { it::class == klass })
+            throw IllegalArgumentException("The class ${klass.simpleName} is already registered.")
 
-        if (klass.objectInstance != null) {
-            _instances[klass] = klass.objectInstance!!
-            return klass.objectInstance!!
-        }
-
-        val instance =
-            klass.constructors
-                .find { it.parameters.size == 1 && it.parameters[0].type.classifier == Registry::class }
-                ?.call(this)
-                ?: klass.constructors
-                    .find { it.parameters.isEmpty() }
-                    ?.call()
-                ?: throw IllegalArgumentException(
-                    "The class ${klass.simpleName} does not have " +
-                            "a no-args constructor or a constructor with a single Registry parameter."
-                )
-
-        if (register) _instances[klass] = instance
+        val instance = klass.create()
+        _instances.add(instance)
 
         return instance
     }
 
-    override fun <T : Any, P : T> set(klass: KClass<T>, instance: P) {
-        if (klass in _instances) throw IllegalArgumentException("The class ${klass.simpleName} is already registered.")
-        _instances[klass] = instance
-    }
-
-    fun setUnsafe(klass: KClass<*>, instance: Any, check: Boolean = true) {
-        if (check && klass in _instances) throw IllegalArgumentException("The class ${klass.simpleName} is already registered.")
-        if (check && !klass.isInstance(instance)) throw IllegalArgumentException(
-            "The instance of ${klass.simpleName} " +
-                    "is of type ${instance::class.simpleName}, " +
-                    "witch is not a subtype of ${klass.simpleName}."
-        )
-
-        _instances[klass] = instance
+    override fun add(instance: Any) {
+        _instances.add(instance)
     }
 
 }
