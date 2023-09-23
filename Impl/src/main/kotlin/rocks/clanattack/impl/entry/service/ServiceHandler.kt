@@ -7,14 +7,13 @@ import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.Service
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.entry.registryImpl
-import rocks.clanattack.impl.java.Reflection
 import rocks.clanattack.impl.util.annotation.AnnotationScanner
 import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
-import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.jvm.javaField
 
 data class ServiceInformation(
     val implementation: ServiceImplementation,
@@ -116,7 +115,10 @@ object ServiceHandler {
                 if (info.annotation.depends.all { services[it]?.implementation?.enabled == true }) {
                     try {
                         info.implementation.enable()
-                        Reflection.setServiceState(info.implementation, true)
+                        ServiceImplementation::enabled.javaField
+                            ?.also { it.isAccessible = true }
+                            ?.also { it.set(info.implementation, true) }
+                            ?.also { it.isAccessible = false }
                         enabled++
                     } catch (e: Exception) {
                         find<Logger>().error(
@@ -163,7 +165,10 @@ object ServiceHandler {
                 if (info.annotation.depends.all { services[it]?.implementation?.enabled != true }) {
                     try {
                         info.implementation.disable()
-                        Reflection.setServiceState(info.implementation, false)
+                        ServiceImplementation::enabled.javaField
+                            ?.also { it.isAccessible = true }
+                            ?.also { it.set(info.implementation, false) }
+                            ?.also { it.isAccessible = false }
                         disabled++
                     } catch (e: Exception) {
                         find<Logger>().error(

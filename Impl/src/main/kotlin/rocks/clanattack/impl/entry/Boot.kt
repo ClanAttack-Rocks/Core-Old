@@ -5,10 +5,11 @@ import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.impl.entry.plugin.LoaderImpl
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler
-import rocks.clanattack.impl.java.Reflection
 import rocks.clanattack.impl.util.log.LoggerImpl
 import rocks.clanattack.impl.util.minecraft.listener.ListenerHandler
 import rocks.clanattack.util.log.Logger
+import kotlin.reflect.jvm.javaField
+import rocks.clanattack.entry.registry as tlRegistry
 
 @Suppress("unused")
 class Boot : JavaPlugin() {
@@ -17,7 +18,10 @@ class Boot : JavaPlugin() {
         val registry = RegistryImpl(this)
 
         try {
-            Reflection.setRegistry(registry)
+            ::tlRegistry.javaField
+                ?.also { it.isAccessible = true }
+                ?.also { it.set(null, registry) }
+                ?.also { it.isAccessible = false }
         } catch (_: Exception) {
             this.logger.severe("Could not set the registry.")
         }
