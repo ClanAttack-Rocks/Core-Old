@@ -19,13 +19,6 @@ import rocks.clanattack.entry.Registry
  * - two parameters, the first one being of the type of the event and the second one being a [Registry].
  *
  * The method can be private, but must be accessible.
- */
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class Listen(val event: KClass<out Event>)
-
-/**
- * The priority of the listener.
  *
  * Listeners with a higher priority will be called first.
  *
@@ -34,21 +27,16 @@ annotation class Listen(val event: KClass<out Event>)
  * [NORMAL][ListenerPriority.NORMAL] ->
  * [LOW][ListenerPriority.LOW] ->
  * [LOWEST][ListenerPriority.LOWEST]
+ *
+ * If [executeCanceled] is true, the listener will also be called when the event is canceled.
+ *
+ * If [includeSubevents] is true, the listener will also be called when a subevent of the specified event is fired.
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Priority(val priority: ListenerPriority)
-
-/**
- * Also executes the listener when the event is canceled.
- */
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class ExecuteCanceled
-
-/**
- * Include any subevents of the specified event.
- */
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class IncludeSubevents
+annotation class Listen(
+    val event: KClass<out Event>,
+    val priority: ListenerPriority = ListenerPriority.NORMAL,
+    val executeCanceled: Boolean = false,
+    val includeSubevents: Boolean = false,
+)

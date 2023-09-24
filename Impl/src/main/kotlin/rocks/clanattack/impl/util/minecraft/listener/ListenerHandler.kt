@@ -5,20 +5,16 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
-import org.bukkit.plugin.java.JavaPlugin
-import org.reflections.Reflections
-import org.reflections.scanners.SubTypesScanner
-import org.reflections.util.ConfigurationBuilder
-import rocks.clanattack.entry.Registry
+import rock.clanattack.java.AnnotationScanner
+import rock.clanattack.java.MethodHelper
+import rock.clanattack.java.SubTypeScanner
 import rocks.clanattack.entry.find
-import rocks.clanattack.entry.plugin.Loader
-import rocks.clanattack.impl.util.annotation.AnnotationScanner
+import rocks.clanattack.entry.registry
 import rocks.clanattack.util.log.Logger
 import rocks.clanattack.util.minecraft.listener.Listen
 import rocks.clanattack.util.task.TaskService
+import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
-import kotlin.reflect.full.functions
-import kotlin.reflect.full.isSuperclassOf
 
 object ListenerHandler {
 
@@ -35,14 +31,14 @@ object ListenerHandler {
             detached = true
         }) {
             find<Logger>().info("Loading listeners...")
-            AnnotationScanner.findMethods(Listen::class).forEach {
+            AnnotationScanner.getAnnotatedMethods(Listen::class.java).forEach {
                 val declaringClass = it.declaringClass
                 val instance = try {
-                    find<Registry>().getOrCreate(declaringClass.kotlin)
-                } catch (_: Exception) {
+                    registry.getOrCreate(declaringClass.kotlin)
+                } catch (e: Exception) {
                     find<Logger>().error(
                         "Could not create instance of ${declaringClass.name} " +
-                                "(required for listener ${it.declaringClass.simpleName}#${it.name})"
+                                "(required for listener ${MethodHelper.getFullName(it)})", e
                     )
                     return@forEach
                 }
@@ -63,34 +59,27 @@ object ListenerHandler {
             val execute = EventExecutor { _, event -> fireEvent(event) }
             var counter = 0
 
-            Reflections(
-                ConfigurationBuilder()
-                    .addClassLoaders(find<Loader>().classLoaders.keys)
-                    .setScanners(SubTypesScanner())
-            ).getSubTypesOf(Event::class.java)
+            SubTypeScanner.getSubTypesOf(Event::class.java)
                 .asSequence()
-                .map { it.kotlin }
-                .filter { !it.isAbstract }
-                .filter {
-                    it.functions.any { function ->
-                        function.parameters.isEmpty() && function.name == "getHandlers"
-                    }
-                }
-                .filter { shouldRegister(it) }
+                .map { it.asSubclass(Event::class.java) }
+                .filter { !Modifier.isAbstract(it.modifiers) }
+                .filter { it.methods.any { method -> method.name == "getHandlers" && method.parameterCount == 0 } }
+                .filter { shouldRegister(it.kotlin) }
                 .distinct()
+                .toList()
                 .forEach {
                     Bukkit.getPluginManager().registerEvent(
-                        it.java,
+                        it,
                         listener,
                         EventPriority.NORMAL,
                         execute,
-                        find<JavaPlugin>()
+                        find()
                     )
 
                     counter++
                 }
-            find<Logger>().info("Registered $counter events.")
 
+            find<Logger>().info("Registered $counter events.")
             loaded = true
         }
     }
@@ -102,7 +91,7 @@ object ListenerHandler {
         val eventClass = event::class
 
         val toBeCalled = this.listeners
-            .filter { (klass, _) -> klass.isSuperclassOf(eventClass) }
+            .filter { (klass, _) -> klass.java.isAssignableFrom(eventClass.java) }
             .map { (_, list) -> list.filter { eventClass.shouldCall(it) } }
             .flatten()
 

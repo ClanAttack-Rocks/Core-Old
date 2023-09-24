@@ -2,13 +2,15 @@ package rocks.clanattack.impl.util.minecraft.listener
 
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
-import rocks.clanattack.util.minecraft.listener.*
+import rocks.clanattack.entry.find
+import rocks.clanattack.util.log.Logger
+import rocks.clanattack.util.minecraft.listener.Listen
+import rocks.clanattack.util.minecraft.listener.ListenerPriority
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
 
 data class ListenerData(
     val event: Class<out Event>,
-    val handlerClass: Class<out Event>,
     val priority: ListenerPriority,
     val executeCanceled: Boolean,
     val includeSubevents: Boolean,
@@ -18,35 +20,25 @@ data class ListenerData(
 
     companion object {
 
-        fun create(method: Method, declaringInstance: Any) = ListenerData(
-            method.getDeclaredAnnotation(Listen::class.java).event.java,
-            method.getDeclaredAnnotation(Listen::class.java).event.java
-                .getMethod("getHandlerList").declaringClass.asSubclass(Event::class.java),
-            if (method.isAnnotationPresent(Priority::class.java))
-                method.getDeclaredAnnotation(Priority::class.java).priority else ListenerPriority.NORMAL,
-            method.isAnnotationPresent(ExecuteCanceled::class.java),
-            method.isAnnotationPresent(IncludeSubevents::class.java),
-            method,
-            declaringInstance
-        )
+        fun create(method: Method, declaringInstance: Any) = method.getDeclaredAnnotation(Listen::class.java).let {
+            ListenerData(
+                it.event.java,
+                it.priority,
+                it.executeCanceled,
+                it.includeSubevents,
+                method,
+                declaringInstance
+            )
+        }
 
     }
 
 
 }
 
-fun KClass<out Event>.shouldCall(listenerData: ListenerData): Boolean {
-    val handlerClass = this.java.getDeclaredMethod("getHandlerList").declaringClass
+fun KClass<out Event>.shouldCall(listenerData: ListenerData) =
+    listenerData.event.isAssignableFrom(this.java) && listenerData.includeSubevents
 
-    if (!listenerData.event.isAssignableFrom(this.java)) return false
-    if (listenerData.handlerClass == handlerClass) return true
-
-    return listenerData.includeSubevents
-}
-
-fun Event.shouldCall(listenerData: ListenerData): Boolean {
-    if (!this::class.shouldCall(listenerData)) return false
-    if (this is Cancellable && this.isCancelled && !listenerData.executeCanceled) return false
-
-    return true
-}
+fun Event.shouldCall(listenerData: ListenerData) =
+    this::class.shouldCall(listenerData)
+        && (this !is Cancellable || !this.isCancelled || listenerData.executeCanceled)
