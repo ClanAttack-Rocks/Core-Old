@@ -14,6 +14,10 @@ bukkit {
     authors = listOf("CheeseTastisch")
 }
 
+repositories {
+    maven("https://oss.sonatype.org/content/repositories/snapshots/")
+}
+
 dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:2.15.2")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
@@ -23,6 +27,7 @@ dependencies {
     api("io.github.classgraph:classgraph:4.8.162")
 
     api("com.github.stefvanschie.inventoryframework:IF:0.10.11")
+    api("me.catcoder:bukkit-sidebar:6.2.3-SNAPSHOT")
 }
 
 tasks{
