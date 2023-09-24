@@ -10,6 +10,7 @@ import rock.clanattack.java.MethodHelper
 import rock.clanattack.java.SubTypeScanner
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.registry
+import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
 import rocks.clanattack.util.minecraft.listener.Listen
 import rocks.clanattack.util.task.TaskService
@@ -97,7 +98,15 @@ object ListenerHandler {
 
         for (listenerData in toBeCalled) {
             if (!event.shouldCall(listenerData)) continue
-            listenerData.method.invoke(listenerData.declaringInstance, event)
+            try {
+                listenerData.method.invoke(listenerData.declaringInstance, event)
+            } catch (e: Exception) {
+                find<Logger>().error(
+                    "Could not execute listener ${MethodHelper.getFullName(listenerData.method)} " +
+                            "for event ${event::class.qualifiedName}",
+                    e.invocationCause
+                )
+            }
         }
     }
 

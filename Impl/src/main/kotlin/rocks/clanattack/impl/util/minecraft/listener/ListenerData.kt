@@ -2,8 +2,6 @@ package rocks.clanattack.impl.util.minecraft.listener
 
 import org.bukkit.event.Cancellable
 import org.bukkit.event.Event
-import rocks.clanattack.entry.find
-import rocks.clanattack.util.log.Logger
 import rocks.clanattack.util.minecraft.listener.Listen
 import rocks.clanattack.util.minecraft.listener.ListenerPriority
 import java.lang.reflect.Method
@@ -37,8 +35,9 @@ data class ListenerData(
 }
 
 fun KClass<out Event>.shouldCall(listenerData: ListenerData) =
-    listenerData.event.isAssignableFrom(this.java) && listenerData.includeSubevents
+    listenerData.event == this.java
+            || (listenerData.includeSubevents && listenerData.event.isAssignableFrom(this.java))
 
 fun Event.shouldCall(listenerData: ListenerData) =
     this::class.shouldCall(listenerData)
-        && (this !is Cancellable || !this.isCancelled || listenerData.executeCanceled)
+            && (this !is Cancellable || !this.isCancelled || listenerData.executeCanceled)
