@@ -21,6 +21,8 @@ dependencies {
 
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     api("io.github.classgraph:classgraph:4.8.162")
+
+    api("com.github.stefvanschie.inventoryframework:IF:0.10.11")
 }
 
 tasks{
