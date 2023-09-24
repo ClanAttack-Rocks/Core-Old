@@ -8,7 +8,7 @@ import org.bukkit.inventory.meta.ItemMeta
  *
  * If the item has no meta or the meta is not of type [T], the [block] will not be executed.
  */
-inline fun <reified T : ItemMeta> ItemStack.modify(crossinline block: T.() -> Unit) = also {
+inline fun <reified T : ItemMeta> ItemStack.modifyMeta(crossinline block: T.() -> Unit) = also {
     val meta = itemMeta as? T ?: return@also
     meta.block()
     itemMeta = meta
