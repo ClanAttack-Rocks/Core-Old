@@ -1,6 +1,9 @@
+@file:Suppress("unused")
+
 package rocks.clanattack.extention
 
 import rocks.clanattack.json.JsonDocument
+import rocks.clanattack.json.json
 
 /**
  * Check if the iterable is empty
@@ -33,8 +36,8 @@ inline fun <T, R> Iterable<T>.mapCatching(transform: (T) -> R) = map { runCatchi
  * @return the list of [JsonDocument]s
  * @see JsonDocument
  */
-inline fun <T> Iterable<T>.mapToJson(transform: JsonDocument.(T) -> Unit) =
-    map { JsonDocument.empty().apply { transform(it) } }
+inline fun <T> Iterable<T>.mapToJson(crossinline transform: JsonDocument.(T) -> Unit) =
+    map { json { transform(it) } }
 
 /**
  * Filters out any value, where the first or second value of the pair is null
