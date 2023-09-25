@@ -5,9 +5,9 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
-import rock.clanattack.java.AnnotationScanner
-import rock.clanattack.java.MethodHelper
-import rock.clanattack.java.SubTypeScanner
+import rocks.clanattack.java.AnnotationScanner
+import rocks.clanattack.java.MethodHelper
+import rocks.clanattack.java.SubTypeScanner
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.registry
 import rocks.clanattack.extention.invocationCause

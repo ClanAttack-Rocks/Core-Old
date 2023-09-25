@@ -1,4 +1,4 @@
-package rock.clanattack.java;
+package rocks.clanattack.java;
 
 import kotlin.Unit;
 import rocks.clanattack.impl.JavaRegistry;

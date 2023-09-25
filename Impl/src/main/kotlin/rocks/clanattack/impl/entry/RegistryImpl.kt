@@ -1,7 +1,7 @@
 package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.Plugin
-import rock.clanattack.java.ClassHelper
+import rocks.clanattack.java.ClassHelper
 import rocks.clanattack.entry.Registry
 import kotlin.reflect.KClass
 

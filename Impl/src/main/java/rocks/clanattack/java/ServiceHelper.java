@@ -1,4 +1,4 @@
-package rock.clanattack.java;
+package rocks.clanattack.java;
 
 import rocks.clanattack.entry.service.ServiceImplementation;
 

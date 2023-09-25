@@ -1,7 +1,7 @@
 package rocks.clanattack.impl.entry.service
 
-import rock.clanattack.java.AnnotationScanner
-import rock.clanattack.java.ServiceHelper
+import rocks.clanattack.java.AnnotationScanner
+import rocks.clanattack.java.ServiceHelper
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.entry.registry

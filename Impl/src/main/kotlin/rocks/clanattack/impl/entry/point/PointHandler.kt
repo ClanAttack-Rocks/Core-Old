@@ -1,7 +1,7 @@
 package rocks.clanattack.impl.entry.point
 
-import rock.clanattack.java.AnnotationScanner
-import rock.clanattack.java.MethodHelper
+import rocks.clanattack.java.AnnotationScanner
+import rocks.clanattack.java.MethodHelper
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.entry.point.EntryPoint

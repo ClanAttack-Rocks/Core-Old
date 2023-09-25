@@ -1,7 +1,7 @@
 package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.java.JavaPlugin
-import rock.clanattack.java.RegistryHelper
+import rocks.clanattack.java.RegistryHelper
 import rocks.clanattack.impl.entry.plugin.LoaderImpl
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler

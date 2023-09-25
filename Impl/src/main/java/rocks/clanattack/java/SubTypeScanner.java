@@ -1,4 +1,4 @@
-package rock.clanattack.java;
+package rocks.clanattack.java;
 
 import io.github.classgraph.ClassGraph;
 import rocks.clanattack.entry.plugin.Loader;
