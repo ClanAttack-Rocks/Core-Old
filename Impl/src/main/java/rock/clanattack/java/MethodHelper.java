@@ -1,13 +1,12 @@
 package rock.clanattack.java;
 
 import kotlin.Unit;
-import rocks.clanattack.impl.util.JavaMap;
+import rocks.clanattack.impl.JavaRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MethodHelper {
 
@@ -32,7 +31,7 @@ public class MethodHelper {
 
         if (Modifier.isStatic(method.getModifiers())) result = method.invoke(null, parameters.toArray());
         else {
-            var instance = JavaMap.getOrCreate(method.getDeclaringClass());
+            var instance = JavaRegistry.getOrCreate(method.getDeclaringClass());
             result = method.invoke(instance, parameters.toArray());
         }
 

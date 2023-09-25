@@ -2,7 +2,7 @@ package rock.clanattack.java;
 
 import io.github.classgraph.ClassGraph;
 import rocks.clanattack.entry.plugin.Loader;
-import rocks.clanattack.impl.util.JavaMap;
+import rocks.clanattack.impl.JavaRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -25,7 +25,7 @@ public class AnnotationScanner {
     }
 
     public static List<Class<?>> getAnnotatedClasses(Class<? extends Annotation> clazz) {
-        var loaders = JavaMap.find(Loader.class).getClassLoaders().entrySet();
+        var loaders = JavaRegistry.find(Loader.class).getClassLoaders().entrySet();
         var glassGraph = new ClassGraph()
                 .enableClassInfo()
                 .enableAnnotationInfo()
@@ -59,7 +59,7 @@ public class AnnotationScanner {
     }
 
     public static List<Method> getAnnotatedMethods(Class<? extends Annotation> clazz) {
-        var loaders = JavaMap.find(Loader.class).getClassLoaders().entrySet();
+        var loaders = JavaRegistry.find(Loader.class).getClassLoaders().entrySet();
         var glassGraph = new ClassGraph()
                 .enableClassInfo()
                 .enableMethodInfo()

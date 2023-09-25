@@ -1,14 +1,13 @@
 package rock.clanattack.java;
 
 import rocks.clanattack.entry.Registry;
-import rocks.clanattack.impl.util.JavaMap;
+import rocks.clanattack.impl.JavaRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Objects;
 
 public class ClassHelper {
 
@@ -32,7 +31,7 @@ public class ClassHelper {
             constructor.setAccessible(true);
 
             if (constructor.getParameterCount() == 0) return clazz.cast(constructor.newInstance());
-            else return clazz.cast(constructor.newInstance(JavaMap.find(Registry.class)));
+            else return clazz.cast(constructor.newInstance(JavaRegistry.find(Registry.class)));
         }
 
         throw new IllegalArgumentException("The class " + clazz.getName() + " does not have a eligible constructor for automatic creation.");

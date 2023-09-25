@@ -5,8 +5,8 @@ import rock.clanattack.java.RegistryHelper
 import rocks.clanattack.impl.entry.plugin.LoaderImpl
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler
-import rocks.clanattack.impl.util.log.LoggerImpl
-import rocks.clanattack.impl.util.minecraft.listener.ListenerHandler
+import rocks.clanattack.impl.log.LoggerImpl
+import rocks.clanattack.impl.minecraft.listener.ListenerHandler
 
 @Suppress("unused")
 class Boot : JavaPlugin() {
