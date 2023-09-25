@@ -10,7 +10,7 @@ lateinit var registryImpl: RegistryImpl
 
 class RegistryImpl(plugin: Plugin) : Registry {
 
-    val _instances = mutableListOf<Any>()
+    private val _instances = mutableListOf<Any>()
 
     override val instances: List<Any>
         get() = _instances.toList()

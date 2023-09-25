@@ -1,7 +1,5 @@
 package rocks.clanattack.entry.plugin
 
-import rocks.clanattack.entry.service.Service
-
 /**
  * The [Loader] is used to register [PluginRocks], witch are plugins create for ClanAttack.
  *

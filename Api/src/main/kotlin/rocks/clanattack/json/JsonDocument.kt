@@ -21,6 +21,7 @@ import kotlin.reflect.KClass
 /**
  * A [JsonDocument] is a document, that can be serialized to a json string.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 class JsonDocument private constructor(private val data: MutableMap<String, JsonNode>) {
 
     private val listeners = mutableListOf<(JsonDocument) -> Unit>()
@@ -880,7 +881,7 @@ class JsonDocument private constructor(private val data: MutableMap<String, Json
      *
      * @return The [JsonDocument] as a json string.
      */
-    override fun toString() = mapper.writeValueAsString(data)
+    override fun toString(): String = mapper.writeValueAsString(data)
 
     /**
      * Converts the [JsonDocument] to a pretty string.
@@ -889,14 +890,14 @@ class JsonDocument private constructor(private val data: MutableMap<String, Json
      *
      * @return The [JsonDocument] as a pretty json string.
      */
-    fun toPrettyString() = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)
+    fun toPrettyString(): String = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)
 
     companion object {
 
         /**
          * The [ObjectMapper] used in the [JsonDocument]s.
          */
-        val mapper by lazy {
+        val mapper: ObjectMapper by lazy {
             ObjectMapper().registerModules(
                 KotlinModule.Builder()
                     .withReflectionCacheSize(512)

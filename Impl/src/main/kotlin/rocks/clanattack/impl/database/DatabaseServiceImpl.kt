@@ -10,16 +10,9 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 
+@Suppress("EmptyMethod", "EmptyMethod")
 @Register(definition = DatabaseService::class)
 class DatabaseServiceImpl : ServiceImplementation(), DatabaseService {
-
-    override fun enable() {
-        super.enable()
-    }
-
-    override fun disable() {
-        super.disable()
-    }
 
     override fun <T : Any> liveQuery(
         table: String,
@@ -56,7 +49,7 @@ class DatabaseServiceImpl : ServiceImplementation(), DatabaseService {
         TODO("Not yet implemented")
     }
 
-    override fun <T : Any> create(thing: String, datas: List<T>): CompletableFuture<List<T>> {
+    override fun <T : Any> create(thing: String, data: List<T>): CompletableFuture<List<T>> {
         TODO("Not yet implemented")
     }
 

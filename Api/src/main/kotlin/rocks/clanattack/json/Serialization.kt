@@ -36,10 +36,10 @@ class JsonDocumentDeserializer : StdDeserializer<JsonDocument>(JsonDocument::cla
      * Deserialize the [JsonDocument] from a JSON string
      *
      * @param p the [JsonParser] to use
-     * @param ctxt the [DeserializationContext] to use
+     * @param context the [DeserializationContext] to use
      * @return the deserialized [JsonDocument]
      */
-    override fun deserialize(p: JsonParser?, ctxt: DeserializationContext?)=
+    override fun deserialize(p: JsonParser?, context: DeserializationContext?)=
         JsonDocument.fromNode(p?.codec?.readTree<ObjectNode>(p))
 
 }
@@ -53,5 +53,7 @@ object JsonDocumentModule : SimpleModule() {
         addSerializer(JsonDocument::class.java, JsonDocumentSerializer())
         addDeserializer(JsonDocument::class.java, JsonDocumentDeserializer())
     }
+
+    private fun readResolve(): Any = JsonDocumentModule
 
 }

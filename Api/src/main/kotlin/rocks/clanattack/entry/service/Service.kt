@@ -10,7 +10,7 @@ import rocks.clanattack.entry.Registry
  * The definition only provides the methods but no implementation for them and
  * is the only part visible to other plugins.
  *
- * Each definition must have a implementation that is a subclass of [ServiceImplementation]
+ * Each definition must have an implementation that is a subclass of [ServiceImplementation]
  * and is annotated with [Register].
  */
 interface Service

@@ -14,7 +14,6 @@ lateinit var registry: Registry
 /**
  * The [Registry] is used to register instances of classes.
  */
-@Suppress("unused")
 interface Registry {
 
     /**

@@ -73,7 +73,7 @@ interface DatabaseService : Service {
         query: String,
         type: KClass<T>,
         args: Map<String, String> = emptyMap(),
-    ) = this.query(query, type, args).thenApply { it.firstOrNull() }
+    ): CompletableFuture<QueryResult<T>?> = this.query(query, type, args).thenApply { it.firstOrNull() }
 
     /**
      * Selects all records that match the given [thing] and tries to parse them into the given [type].
@@ -89,7 +89,8 @@ interface DatabaseService : Service {
      * @throws IllegalStateException If the data got from the database could not be parsed into the given [type].
      */
     @Throws(IllegalStateException::class)
-    fun <T : Any> singleSelect(thing: String, type: KClass<T>) = this.select(thing, type).thenApply { it.firstOrNull() }
+    fun <T : Any> singleSelect(thing: String, type: KClass<T>): CompletableFuture<T?> =
+        this.select(thing, type).thenApply { it.firstOrNull() }
 
     /**
      * Creates the given [data] in the given [thing].
@@ -97,9 +98,9 @@ interface DatabaseService : Service {
     fun <T : Any> create(thing: String, data: T): CompletableFuture<T>
 
     /**
-     * Inserts the given [datas] in the given [thing].
+     * Inserts the given [data] in the given [thing].
      */
-    fun <T : Any> create(thing: String, datas: List<T>): CompletableFuture<List<T>>
+    fun <T : Any> create(thing: String, data: List<T>): CompletableFuture<List<T>>
 
     /**
      * Updates the given [data] in the given [thing].

@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta
  * @throws IllegalStateException if the item has no meta or the meta is not of type [T]
  */
 @Throws(IllegalStateException::class)
+@Suppress("SameParameterValue")
 inline fun <reified T : ItemMeta, U> ItemStack.meta(crossinline block: T.() -> U): U {
     val meta = itemMeta as? T ?: throw IllegalStateException("Item has no meta or meta is not of type ${T::class.simpleName}")
     val result = meta.block()
