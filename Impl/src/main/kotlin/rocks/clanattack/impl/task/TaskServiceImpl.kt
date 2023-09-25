@@ -7,6 +7,7 @@ import rocks.clanattack.impl.task.detached.DetachedExecutor
 import rocks.clanattack.task.Task
 import rocks.clanattack.task.TaskConfig
 import rocks.clanattack.task.TaskService
+import java.util.concurrent.CompletableFuture
 
 @Register(definition = TaskService::class)
 class TaskServiceImpl : ServiceImplementation(), TaskService {
@@ -24,5 +25,13 @@ class TaskServiceImpl : ServiceImplementation(), TaskService {
                 if (it.detached) DetachedExecutor.runTask(it, task)
                 else AttachedExecutor.runTask(it, task)
             }
+
+    override fun <T> asCompletableFuture(block: suspend Task.() -> T): CompletableFuture<T> {
+        val future = CompletableFuture<T>()
+        execute(detached = true) {
+            future.complete(block())
+        }
+        return future
+    }
 
 }

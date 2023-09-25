@@ -1,6 +1,7 @@
 package rocks.clanattack.task
 
 import rocks.clanattack.entry.service.Service
+import java.util.concurrent.CompletableFuture
 import kotlin.time.Duration
 
 /**
@@ -46,5 +47,10 @@ interface TaskService : Service {
         period?.let { this.period = it }
         times?.let { this.times = it }
     }, task)
+
+    /**
+     * Executes the given [block] detached (now) and returns the result as a [CompletableFuture].
+     */
+    fun <T> asCompletableFuture(block: suspend Task.() -> T): CompletableFuture<T>
 
 }
