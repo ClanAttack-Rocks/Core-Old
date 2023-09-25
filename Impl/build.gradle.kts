@@ -17,6 +17,7 @@ bukkit {
 
 dependencies {
     api(project(":Api"))
+    compileOnlyApi(project(":Library"))
 }
 
 tasks {

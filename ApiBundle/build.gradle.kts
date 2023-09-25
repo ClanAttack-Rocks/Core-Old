@@ -3,12 +3,12 @@ version = "0.0.0"
 
 dependencies {
     api(project(":Api"))
-    api(project(":Library"))
+    api(project(":ApiLibrary"))
 }
 
 tasks {
     jar {
-        dependsOn(":Api:build", ":Library:build")
+        dependsOn(":Api:build", ":ApiLibrary:build")
 
         from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
