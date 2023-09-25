@@ -12,20 +12,18 @@ data class ListenerData(
     val priority: ListenerPriority,
     val executeCanceled: Boolean,
     val includeSubevents: Boolean,
-    val method: Method,
-    val declaringInstance: Any
+    val method: Method
 ) {
 
     companion object {
 
-        fun create(method: Method, declaringInstance: Any) = method.getDeclaredAnnotation(Listen::class.java).let {
+        fun create(method: Method) = method.getDeclaredAnnotation(Listen::class.java).let {
             ListenerData(
                 it.event.java,
                 it.priority,
                 it.executeCanceled,
                 it.includeSubevents,
-                method,
-                declaringInstance
+                method
             )
         }
 

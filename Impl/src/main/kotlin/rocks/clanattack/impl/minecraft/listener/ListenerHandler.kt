@@ -34,7 +34,7 @@ object ListenerHandler {
             find<Logger>().info("Loading listeners...")
             AnnotationScanner.getAnnotatedMethods(Listen::class.java).forEach {
                 val declaringClass = it.declaringClass
-                val instance = try {
+                try {
                     registry.getOrCreate(declaringClass.kotlin)
                 } catch (e: Exception) {
                     find<Logger>().error(
@@ -44,7 +44,7 @@ object ListenerHandler {
                     return@forEach
                 }
 
-                val listenerData = ListenerData.create(it, instance)
+                val listenerData = ListenerData.create(it)
                 listeners.getOrPut(listenerData.event.kotlin) { mutableListOf() }.add(listenerData)
             }
 
@@ -99,7 +99,7 @@ object ListenerHandler {
         for (listenerData in toBeCalled) {
             if (!event.shouldCall(listenerData)) continue
             try {
-                listenerData.method.invoke(listenerData.declaringInstance, event)
+                MethodHelper.call(listenerData.method, event, registry)
             } catch (e: Exception) {
                 find<Logger>().error(
                     "Could not execute listener ${MethodHelper.getFullName(listenerData.method)} " +

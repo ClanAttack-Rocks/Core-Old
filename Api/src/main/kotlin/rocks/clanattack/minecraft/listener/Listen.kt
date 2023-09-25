@@ -14,8 +14,7 @@ import rocks.clanattack.entry.Registry
  *
  * The method can either take
  * - no parameters,
- * - one parameter of the type of the event,
- * - one parameter of the type [Registry] or
+ * - one parameter of the type of the event  or
  * - two parameters, the first one being of the type of the event and the second one being a [Registry].
  *
  * The method can be private, but must be accessible.
