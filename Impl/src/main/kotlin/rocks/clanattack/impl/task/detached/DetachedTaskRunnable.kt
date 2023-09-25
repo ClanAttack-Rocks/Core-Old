@@ -4,7 +4,7 @@ import kotlinx.coroutines.delay
 import rocks.clanattack.task.Task
 import kotlin.time.ExperimentalTime
 
-class DetachedTaskRunnable(private val instance: DetachedTaskImpl, val task: suspend Task.() -> Unit) {
+class DetachedTaskRunnable(private val instance: DetachedTask, val task: suspend Task.() -> Unit) {
 
     @OptIn(ExperimentalTime::class)
     suspend fun start() {

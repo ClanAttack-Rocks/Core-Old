@@ -1,9 +1,9 @@
 package rocks.clanattack.impl.entry.plugin
 
-import rocks.clanattack.entry.plugin.Loader
+import rocks.clanattack.entry.plugin.Loader as Interface
 import rocks.clanattack.entry.service.ServiceImplementation
 
-class LoaderImpl : ServiceImplementation(), Loader {
+class Loader : ServiceImplementation(), Interface {
 
     private val _classLoaders = mutableMapOf<ClassLoader, String>()
     override val classLoaders: Map<ClassLoader, String>

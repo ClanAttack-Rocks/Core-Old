@@ -2,13 +2,13 @@ package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.Plugin
 import rocks.clanattack.java.ClassHelper
-import rocks.clanattack.entry.Registry
+import rocks.clanattack.entry.Registry as Interface
 import kotlin.reflect.KClass
 
-lateinit var registryImpl: RegistryImpl
+lateinit var registryImpl: Registry
     private set
 
-class RegistryImpl(plugin: Plugin) : Registry {
+class Registry(plugin: Plugin) : Interface {
 
     private val _instances = mutableListOf<Any>()
 

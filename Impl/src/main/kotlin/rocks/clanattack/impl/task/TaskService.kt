@@ -5,20 +5,20 @@ import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.task.attached.AttachedExecutor
 import rocks.clanattack.impl.task.detached.DetachedExecutor
 import rocks.clanattack.task.Task
-import rocks.clanattack.task.TaskConfig
-import rocks.clanattack.task.TaskService
+import rocks.clanattack.task.TaskConfig as TaskConfigInterface
+import rocks.clanattack.task.TaskService as Interface
 import java.util.concurrent.CompletableFuture
 
-@Register(definition = TaskService::class)
-class TaskServiceImpl : ServiceImplementation(), TaskService {
+@Register(definition = Interface::class)
+class TaskService : ServiceImplementation(), Interface {
 
     override fun disable() {
         AttachedExecutor.stop()
         DetachedExecutor.stop()
     }
 
-    override fun execute(config: TaskConfig.Builder.() -> Unit, task: suspend Task.() -> Unit) =
-        TaskConfigImpl.Builder()
+    override fun execute(config: TaskConfigInterface.Builder.() -> Unit, task: suspend Task.() -> Unit) =
+        TaskConfig.Builder()
             .apply(config)
             .build()
             .let {

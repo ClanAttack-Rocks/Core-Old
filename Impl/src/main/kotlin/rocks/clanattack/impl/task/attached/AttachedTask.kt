@@ -5,7 +5,7 @@ import rocks.clanattack.task.Task
 import rocks.clanattack.task.TaskConfig
 import java.lang.IllegalStateException
 
-class AttachedTaskImpl(override val config: TaskConfig) : Task {
+class AttachedTask(override val config: TaskConfig) : Task {
 
     var task: BukkitTask? = null
     private val _task: BukkitTask

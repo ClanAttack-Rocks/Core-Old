@@ -1,11 +1,11 @@
 package rocks.clanattack.impl.log
 
 import rocks.clanattack.entry.service.ServiceImplementation
-import rocks.clanattack.log.Logger
+import rocks.clanattack.log.Logger as Interface
 import java.util.logging.Level
 import java.util.logging.Logger as JavaLogger
 
-class LoggerImpl(private val logger: JavaLogger) : ServiceImplementation(), Logger {
+class Logger(private val logger: JavaLogger) : ServiceImplementation(), Interface {
 
     override fun info(message: String) = logger.info(message)
 

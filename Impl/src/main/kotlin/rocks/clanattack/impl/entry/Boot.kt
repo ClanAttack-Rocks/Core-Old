@@ -2,17 +2,17 @@ package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.java.JavaPlugin
 import rocks.clanattack.java.RegistryHelper
-import rocks.clanattack.impl.entry.plugin.LoaderImpl
+import rocks.clanattack.impl.entry.plugin.Loader
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler
-import rocks.clanattack.impl.log.LoggerImpl
+import rocks.clanattack.impl.log.Logger
 import rocks.clanattack.impl.minecraft.listener.ListenerHandler
 
 @Suppress("unused")
 class Boot : JavaPlugin() {
 
     override fun onLoad() {
-        val registry = RegistryImpl(this)
+        val registry = Registry(this)
 
         try {
             RegistryHelper.setRegistry(registry)
@@ -22,9 +22,9 @@ class Boot : JavaPlugin() {
             return
         }
 
-        registry.add(LoggerImpl(this.logger))
+        registry.add(Logger(this.logger))
 
-        val loader = registry.create(LoaderImpl::class)
+        val loader = registry.create(Loader::class)
         loader.register(this.classLoader, "rocks.clanattack.impl")
     }
 

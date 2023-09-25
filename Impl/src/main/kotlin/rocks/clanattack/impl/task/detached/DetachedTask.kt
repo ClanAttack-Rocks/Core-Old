@@ -7,7 +7,7 @@ import rocks.clanattack.task.TaskConfig
 @Volatile
 private var currentId = -1
 
-class DetachedTaskImpl(override val config: TaskConfig) : Task {
+class DetachedTask(override val config: TaskConfig) : Task {
 
     var job: Job? = null
 

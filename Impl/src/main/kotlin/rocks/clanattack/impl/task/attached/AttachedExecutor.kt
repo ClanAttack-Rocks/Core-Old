@@ -16,7 +16,7 @@ object AttachedExecutor {
     }
 
     fun runTask(config: TaskConfig, task: suspend Task.() -> Unit): Task {
-        val taskInstance = AttachedTaskImpl(config)
+        val taskInstance = AttachedTask(config)
         val taskRunnable = AttachedTaskRunnable(taskInstance, task)
 
         val bukkitTask = when {

@@ -27,7 +27,7 @@ object DetachedExecutor : CoroutineScope {
     }
 
     fun runTask(config: TaskConfig, task: suspend Task.() -> Unit): Task {
-        val instance = DetachedTaskImpl(config)
+        val instance = DetachedTask(config)
         val runnable = DetachedTaskRunnable(instance, task)
         instance.job = launch {
             runnable.start()

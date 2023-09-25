@@ -1,7 +1,7 @@
 package rocks.clanattack.impl.database
 
 import rocks.clanattack.database.ChangeType
-import rocks.clanattack.database.DatabaseService
+import rocks.clanattack.database.DatabaseService as Interface
 import rocks.clanattack.database.Patch
 import rocks.clanattack.database.QueryResult
 import rocks.clanattack.entry.service.Register
@@ -11,8 +11,8 @@ import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 
 @Suppress("EmptyMethod", "EmptyMethod")
-@Register(definition = DatabaseService::class)
-class DatabaseServiceImpl : ServiceImplementation(), DatabaseService {
+@Register(definition = Interface::class)
+class DatabaseService : ServiceImplementation(), Interface {
 
     override fun <T : Any> liveQuery(
         table: String,

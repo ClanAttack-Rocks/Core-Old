@@ -3,7 +3,7 @@ package rocks.clanattack.impl.task.attached
 import kotlinx.coroutines.runBlocking
 import rocks.clanattack.task.Task
 
-class AttachedTaskRunnable(private val instance: AttachedTaskImpl, val task: suspend Task.() -> Unit) : Runnable {
+class AttachedTaskRunnable(private val instance: AttachedTask, val task: suspend Task.() -> Unit) : Runnable {
     
     override fun run() {
         instance.timesExecuted++
