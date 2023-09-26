@@ -13,6 +13,9 @@ dependencies {
     // Minecraft
     api("com.github.stefvanschie.inventoryframework:IF:0.10.11")
     api("me.catcoder:bukkit-sidebar:6.2.3-SNAPSHOT")
+
+    // Discord
+    api("dev.kord:kord-core:0.11.1")
 }
 
 tasks{
