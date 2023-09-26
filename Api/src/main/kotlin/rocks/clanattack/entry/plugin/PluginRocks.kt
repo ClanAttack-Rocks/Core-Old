@@ -2,7 +2,7 @@ package rocks.clanattack.entry.plugin
 
 import org.bukkit.plugin.java.JavaPlugin
 import rocks.clanattack.entry.find
-import rocks.clanattack.log.Logger
+import rocks.clanattack.util.log.Logger
 import java.lang.Exception
 
 /**

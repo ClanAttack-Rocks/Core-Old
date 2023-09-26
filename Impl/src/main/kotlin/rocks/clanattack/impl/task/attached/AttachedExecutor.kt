@@ -2,7 +2,7 @@ package rocks.clanattack.impl.task.attached
 
 import org.bukkit.Bukkit
 import rocks.clanattack.entry.find
-import rocks.clanattack.extention.inWholeTicks
+import rocks.clanattack.util.extention.inWholeTicks
 import rocks.clanattack.task.Task
 import rocks.clanattack.task.TaskConfig
 

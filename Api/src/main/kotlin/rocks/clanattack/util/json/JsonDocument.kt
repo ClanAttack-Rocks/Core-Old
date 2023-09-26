@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package rocks.clanattack.json
+package rocks.clanattack.util.json
 
 import java.io.File
 import java.io.OutputStream

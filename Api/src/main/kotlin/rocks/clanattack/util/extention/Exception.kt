@@ -1,4 +1,4 @@
-package rocks.clanattack.extention
+package rocks.clanattack.util.extention
 
 import java.lang.reflect.InvocationTargetException
 

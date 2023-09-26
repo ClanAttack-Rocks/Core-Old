@@ -1,9 +1,9 @@
 @file:Suppress("unused")
 
-package rocks.clanattack.extention
+package rocks.clanattack.util.extention
 
-import rocks.clanattack.json.JsonDocument
-import rocks.clanattack.json.json
+import rocks.clanattack.util.json.JsonDocument
+import rocks.clanattack.util.json.json
 
 /**
  * Check if the iterable is empty

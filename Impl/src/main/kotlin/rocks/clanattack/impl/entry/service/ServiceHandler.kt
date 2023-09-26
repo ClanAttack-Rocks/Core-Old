@@ -8,8 +8,8 @@ import rocks.clanattack.entry.registry
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.Service
 import rocks.clanattack.entry.service.ServiceImplementation
-import rocks.clanattack.extention.invocationCause
-import rocks.clanattack.log.Logger
+import rocks.clanattack.util.extention.invocationCause
+import rocks.clanattack.util.log.Logger
 import kotlin.reflect.KClass
 
 data class ServiceInformation(

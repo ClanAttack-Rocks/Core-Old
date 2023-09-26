@@ -1,4 +1,4 @@
-package rocks.clanattack.impl.json
+package rocks.clanattack.impl.util.json
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.JsonParser
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import rocks.clanattack.entry.find
-import rocks.clanattack.extention.unit
+import rocks.clanattack.util.extention.unit
 
 class JsonDocumentSerializer : StdSerializer<JsonDocument>(JsonDocument::class.java) {
 

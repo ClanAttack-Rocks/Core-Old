@@ -1,7 +1,7 @@
 package rocks.clanattack.java;
 
 import kotlin.Unit;
-import rocks.clanattack.impl.JavaRegistry;
+import rocks.clanattack.impl.util.JavaRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

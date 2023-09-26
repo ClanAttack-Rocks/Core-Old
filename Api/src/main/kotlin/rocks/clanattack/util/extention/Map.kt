@@ -1,9 +1,9 @@
 @file:Suppress("unused")
 
-package rocks.clanattack.extention
+package rocks.clanattack.util.extention
 
-import rocks.clanattack.json.JsonDocument
-import rocks.clanattack.json.json
+import rocks.clanattack.util.json.JsonDocument
+import rocks.clanattack.util.json.json
 
 /**
  * Maps the values of the map to a list of the results of applying the given transform function to each value of the original map.

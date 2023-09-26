@@ -1,4 +1,4 @@
-package rocks.clanattack.log
+package rocks.clanattack.util.log
 
 /**
  * The [Logger] can be used to log messages.

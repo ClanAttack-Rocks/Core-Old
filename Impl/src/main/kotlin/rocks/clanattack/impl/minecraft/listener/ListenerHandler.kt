@@ -10,8 +10,8 @@ import rocks.clanattack.java.MethodHelper
 import rocks.clanattack.java.SubTypeScanner
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.registry
-import rocks.clanattack.extention.invocationCause
-import rocks.clanattack.log.Logger
+import rocks.clanattack.util.extention.invocationCause
+import rocks.clanattack.util.log.Logger
 import rocks.clanattack.minecraft.listener.Listen
 import rocks.clanattack.task.TaskService
 import java.lang.reflect.Modifier

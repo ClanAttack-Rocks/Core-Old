@@ -5,7 +5,7 @@ import rocks.clanattack.java.RegistryHelper
 import rocks.clanattack.impl.entry.plugin.Loader
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler
-import rocks.clanattack.impl.log.Logger
+import rocks.clanattack.impl.util.log.Logger
 import rocks.clanattack.impl.minecraft.listener.ListenerHandler
 
 @Suppress("unused")

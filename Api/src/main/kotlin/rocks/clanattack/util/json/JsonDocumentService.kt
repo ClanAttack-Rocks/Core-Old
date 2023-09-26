@@ -1,4 +1,4 @@
-package rocks.clanattack.json
+package rocks.clanattack.util.json
 
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Service

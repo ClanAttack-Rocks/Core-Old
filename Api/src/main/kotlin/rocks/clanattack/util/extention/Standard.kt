@@ -1,4 +1,4 @@
-package rocks.clanattack.extention
+package rocks.clanattack.util.extention
 
 /**
  * Checks if the predicate evaluates to true, if so, the block will be executed

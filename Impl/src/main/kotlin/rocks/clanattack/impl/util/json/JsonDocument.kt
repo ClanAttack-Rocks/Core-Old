@@ -1,4 +1,4 @@
-package rocks.clanattack.impl.json
+package rocks.clanattack.impl.util.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -8,12 +8,12 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import rocks.clanattack.extention.alsoIf
-import rocks.clanattack.extention.unit
+import rocks.clanattack.util.extention.alsoIf
+import rocks.clanattack.util.extention.unit
 import java.io.File
 import java.io.OutputStream
 import kotlin.reflect.KClass
-import rocks.clanattack.json.JsonDocument as Interface
+import rocks.clanattack.util.json.JsonDocument as Interface
 
 class JsonDocument(
     val data: MutableMap<String, JsonNode> = mutableMapOf(),

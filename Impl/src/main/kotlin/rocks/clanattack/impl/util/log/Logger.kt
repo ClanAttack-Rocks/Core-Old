@@ -1,7 +1,7 @@
-package rocks.clanattack.impl.log
+package rocks.clanattack.impl.util.log
 
 import rocks.clanattack.entry.service.ServiceImplementation
-import rocks.clanattack.log.Logger as Interface
+import rocks.clanattack.util.log.Logger as Interface
 import java.util.logging.Level
 import java.util.logging.Logger as JavaLogger
 

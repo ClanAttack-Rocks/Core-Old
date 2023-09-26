@@ -1,7 +1,7 @@
 package rocks.clanattack.java;
 
 import rocks.clanattack.entry.Registry;
-import rocks.clanattack.impl.JavaRegistry;
+import rocks.clanattack.impl.util.JavaRegistry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

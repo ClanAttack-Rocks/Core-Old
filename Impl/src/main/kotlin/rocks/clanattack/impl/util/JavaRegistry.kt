@@ -1,4 +1,4 @@
-package rocks.clanattack.impl
+package rocks.clanattack.impl.util
 
 import rocks.clanattack.entry.registry
 

@@ -7,8 +7,8 @@ import rocks.clanattack.entry.plugin.Loader
 import rocks.clanattack.entry.point.EntryPoint
 import rocks.clanattack.entry.point.ExitPoint
 import rocks.clanattack.entry.registry
-import rocks.clanattack.extention.invocationCause
-import rocks.clanattack.log.Logger
+import rocks.clanattack.util.extention.invocationCause
+import rocks.clanattack.util.log.Logger
 import java.lang.reflect.Method
 
 object PointHandler {

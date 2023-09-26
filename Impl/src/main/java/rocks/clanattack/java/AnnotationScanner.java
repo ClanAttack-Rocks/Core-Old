@@ -2,7 +2,7 @@ package rocks.clanattack.java;
 
 import io.github.classgraph.ClassGraph;
 import rocks.clanattack.entry.plugin.Loader;
-import rocks.clanattack.impl.JavaRegistry;
+import rocks.clanattack.impl.util.JavaRegistry;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
