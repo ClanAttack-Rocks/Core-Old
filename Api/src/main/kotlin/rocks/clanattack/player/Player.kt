@@ -2,29 +2,73 @@ package rocks.clanattack.player
 
 import org.bukkit.OfflinePlayer
 import rocks.clanattack.player.trait.ConnectionTrait
+import rocks.clanattack.player.trait.DataTrait
 import org.bukkit.entity.Player as MinecraftPlayer
 import rocks.clanattack.player.trait.DisplayTrait
-import rocks.clanattack.player.trait.PermissionTrait
 import rocks.clanattack.player.trait.communication.CommunicationTrait
 import java.util.*
 
+/**
+ * A [Player] is a wrapper around a [MinecraftPlayer] that provides additional functionality.
+ */
 interface Player {
 
+    /**
+     * The uuid of the player.
+     */
     val uuid: UUID
 
+    /**
+     * The name of the player.
+     *
+     * @see DisplayTrait.name
+     */
     val name: String
         get() = display.name
 
+    /**
+     * The [MinecraftPlayer] instance of the player, or null if the player is offline.
+     */
     val minecraft: MinecraftPlayer?
 
+    /**
+     * The [OfflinePlayer] instance of the player.
+     */
     val offline: OfflinePlayer
 
+    /**
+     * The [CommunicationTrait] of the player.
+     *
+     * The [CommunicationTrait] is used to communicate with the player,
+     * including amongst others sending messages, titles or playing sounds.
+     */
     val communication: CommunicationTrait
 
+    /**
+     * The [ConnectionTrait] of the player.
+     *
+     * The [ConnectionTrait] is used to get information about the players connection,
+     * including amongst others the players ip address or ping.
+     */
     val connection: ConnectionTrait
 
+    /**
+     * The [DataTrait] of the player.
+     *
+     * The [DataTrait] is used to store data for a specific player.
+     */
+    val data: DataTrait
+
+    /**
+     * The [DisplayTrait] of the player.
+     *
+     * The [DisplayTrait] is used to get information about how the player is displayed to other players.
+     */
     val display: DisplayTrait
 
-    val permission: PermissionTrait
+    /**
+     * Checks if the player has the given [permission].
+     */
+    fun hasPermission(permission: String): Boolean
 
 }
