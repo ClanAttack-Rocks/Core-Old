@@ -52,4 +52,12 @@ interface Replacement {
      */
     fun choice(placeholder: String, choice: Int)
 
+    /**
+     * Add a message as a replacement.
+     *
+     * The [placeholder] will be replaced with the [message] (getting it from the language file),
+     * respecting the formatting of the gotten message.
+     */
+    fun message(placeholder: String, message: String)
+
 }
