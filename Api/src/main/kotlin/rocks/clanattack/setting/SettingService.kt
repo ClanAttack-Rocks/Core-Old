@@ -7,9 +7,8 @@ import kotlin.reflect.KClass
 /**
  * The [SettingService] is used to store settings in the database.
  *
- * Settings are stored as key-value paris,
- * where the key is always a [String] and
- * the value will be mapped to any given type.
+ * Settings are stored as key-value paris where the key and value is always a [String].
+ * However, the service can map the value to a different type.
  *
  * The keys are case-sensitive.
  */
@@ -18,7 +17,7 @@ interface SettingService : Service {
     /**
      * All settings that are currently stored in the database.
      */
-    val settings: Map<String, Any>
+    val settings: Map<String, String>
 
     /**
      * Registers a setting.
