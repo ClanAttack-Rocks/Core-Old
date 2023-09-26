@@ -16,6 +16,11 @@ import kotlin.reflect.KClass
 interface SettingService : Service {
 
     /**
+     * All settings that are currently stored in the database.
+     */
+    val settings: Map<String, Any>
+
+    /**
      * Registers a setting.
      *
      * This will only create the setting if no setting with the given [key] exists.
@@ -47,10 +52,5 @@ interface SettingService : Service {
      * Returns the given [default] if no setting with the given [key] exists.
      */
     operator fun <T : Any> get(key: String, type: KClass<T>, default: T): T
-
-    /**
-     * Gets all settings.
-     */
-    fun getAll(): CompletableFuture<Map<String, Any>>
 
 }
