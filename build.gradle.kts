@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     `java-library`
-    kotlin("jvm") version "1.7.22"
+    kotlin("jvm") version "1.9.0"
     id("io.papermc.paperweight.userdev") version "1.5.5"
 }
 
@@ -51,7 +51,6 @@ allprojects {
         withType<KotlinCompile> {
             kotlinOptions {
                 jvmTarget = "17"
-                freeCompilerArgs = listOf("-Xjvm-default=enable")
             }
         }
     }
