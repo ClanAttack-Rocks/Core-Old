@@ -17,4 +17,6 @@ interface DisplayTrait {
 
     var suffix: ComponentLike?
 
+    var playerListName: ComponentLike
+
 }

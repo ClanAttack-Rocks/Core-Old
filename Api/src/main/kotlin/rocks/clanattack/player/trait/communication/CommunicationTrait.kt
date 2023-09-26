@@ -2,9 +2,11 @@ package rocks.clanattack.player.trait.communication
 
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.sound.SoundStop
+import net.kyori.adventure.text.ComponentLike
 import org.bukkit.Instrument
 import org.bukkit.Location
 import org.bukkit.Note
+import org.bukkit.SoundCategory
 import rocks.clanattack.language.Language
 import rocks.clanattack.language.Replacement
 import kotlin.time.Duration
@@ -13,6 +15,10 @@ import kotlin.time.Duration.Companion.seconds
 interface CommunicationTrait {
 
     var language: Language
+
+    var playerListHeader: ComponentLike?
+
+    var playerListFooter: ComponentLike?
 
     val bossBars: Map<String, BossBar>
 
@@ -60,6 +66,10 @@ interface CommunicationTrait {
     fun stopSound(sound: Sound)
 
     fun stopSound(sound: SoundStop)
+
+    fun stopSound(category: SoundCategory)
+
+    fun stopAllSounds()
 
     fun playNote(instrument: Instrument, note: Note, location: Location? = null)
 
