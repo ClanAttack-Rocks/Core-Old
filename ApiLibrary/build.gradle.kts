@@ -8,6 +8,7 @@ repositories {
 dependencies {
     // Kotlin
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
+    api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 
     // Minecraft
     api("com.github.stefvanschie.inventoryframework:IF:0.10.11")
