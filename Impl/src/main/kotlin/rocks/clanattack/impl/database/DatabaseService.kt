@@ -39,6 +39,7 @@ class DatabaseService : ServiceImplementation(), Interface {
     private lateinit var send: suspend (String, List<Any>) -> JsonDocument?
 
     private val answers = mutableMapOf<Int, (JsonDocument) -> Unit>()
+    private val liveQueryReceivers = mutableMapOf<UUID, (JsonDocument) -> Unit>()
 
     override fun enable() {
         val config = find<JavaPlugin>().dataFolder
@@ -97,16 +98,26 @@ class DatabaseService : ServiceImplementation(), Interface {
                             }.let { json(it) }
 
                             val id = try {
-                                message.get<Int>("id") ?: continue
+                                message.get<Int>("id")
                             } catch (e: IllegalArgumentException) {
                                 find<Logger>().error("Failed to parse message", e)
                                 continue
                             }
 
-                            val answer = answers[id] ?: continue
-                            answers.remove(id)
+                            if (id != null) {
+                                val answer = answers[id] ?: continue
+                                answers.remove(id)
 
-                            answer(message)
+                                answer(message)
+                            } else {
+                                val result = message.get<JsonDocument>("result") ?: continue
+                                if ("action" !in result || "id" !in result) continue
+
+                                val uuid = UUID.fromString(result.get<String>("id") ?: continue)
+                                if (uuid !in liveQueryReceivers) continue
+
+                                liveQueryReceivers[uuid]?.invoke(result)
+                            }
                         }
                     }
 
@@ -149,26 +160,44 @@ class DatabaseService : ServiceImplementation(), Interface {
         type: KClass<T>,
         callback: (ChangeType, String, T?) -> Unit
     ) = find<TaskService>().asCompletableFuture {
-        val result = send("liveQuery", listOf(table, false)) ?: throw IllegalStateException("Failed to send liveQuery")
-
-        // TODO: Implement liveQuery callback
-
-        return@asCompletableFuture result.get<String>("id")
+        val liveQueryId = send("liveQuery", listOf(table, false))
+            ?.get<String>("id")
             ?.let { UUID.fromString(it) }
-            ?: throw IllegalStateException("Failed to parse liveQuery id")
+            ?: throw IllegalStateException("Failed to send liveQuery")
+
+        liveQueryReceivers[liveQueryId] = receiver@{
+            val result = it.get<JsonDocument>("result") ?: return@receiver
+            val action = try {
+                result.get<ChangeType>("action") ?: return@receiver
+            } catch (e: IllegalArgumentException) {
+                find<Logger>().error("Failed to parse action in liveQuery $liveQueryId", e)
+                return@receiver
+            }
+
+            val resultDocument = result.get<JsonDocument>("result") ?: return@receiver
+            val id = resultDocument.get<String>("id") ?: return@receiver
+            val parsedResult = if (action != ChangeType.DELETE) result["result", type] ?: return@receiver else null
+
+            callback(action, id, parsedResult)
+        }
+
+        return@asCompletableFuture liveQueryId
     }
 
     override fun liveQuery(
         table: String,
         callback: (ChangeType, String, List<Patch>) -> Unit
     ) = find<TaskService>().asCompletableFuture {
-        val result = send("liveQuery", listOf(table, true)) ?: throw IllegalStateException("Failed to send liveQuery")
-
-        // TODO: Implement liveQuery callback
-
-        return@asCompletableFuture result.get<String>("id")
+        val liveQueryId = send("liveQuery", listOf(table, true))
+            ?.get<String>("id")
             ?.let { UUID.fromString(it) }
-            ?: throw IllegalStateException("Failed to parse liveQuery id")
+            ?: throw IllegalStateException("Failed to send liveQuery")
+
+        liveQueryReceivers[liveQueryId] = receiver@{
+            // TODO: Parse and call callback
+        }
+
+        return@asCompletableFuture liveQueryId
     }
 
     override fun killLiveQuery(id: UUID) = find<TaskService>().asCompletableFuture {
