@@ -49,6 +49,17 @@ interface CommunicationTrait {
     fun sendMessage(key: String, replacement: Replacement.() -> Unit = {})
 
     /**
+     * Sends a message to the player over discord.
+     *
+     * The message will be translated using the players [language].
+     *
+     * The function will return `true` if the message was sent successfully, `false` otherwise.
+     *
+     * @see Replacement
+     */
+    fun sendDiscordMessage(key: String, replacement: Replacement.() -> Unit = {}): Boolean
+
+    /**
      * Sends an actionbar to the player.
      *
      * The actionbar will stay for at least the given [duration],
