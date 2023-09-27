@@ -60,7 +60,7 @@ inline fun <T> T?.ifNull(block: () -> Unit): T? {
 /**
  * Executes the block and returns always [Unit]
  */
-fun <T : Any?> unit(block: () -> T) { block() }
+inline fun <T : Any?> unit(block: () -> T) { block() }
 
 /**
  * Executes the block with the receiver as receiver and returns the block's result
