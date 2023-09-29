@@ -12,7 +12,7 @@ import kotlin.time.Duration
  * the asynchronous method returns a promise to supply the value at some point in the future.
  *
  * A [Promise] is in one of these states:
- * - pending: initial state, neither resolved nor rejected.
+ * - pending: initial state, neither fulfilled nor rejected.
  * - fulfilled: meaning that the operation completed successfully.
  * - rejected: meaning that the operation failed.
  *
@@ -32,27 +32,27 @@ interface Promise<T> {
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
-     * The returned [Promise] is a new [Promise] that is either resolved or rejected
+     * The returned [Promise] is a new [Promise] that is either fulfilled or rejected
      * with the same value or reason as the original.
      *
-     * If the [onResolve] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     * If the [onFulfill] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
      */
-    fun then(onResolve: (T) -> Unit, onReject: ((Throwable) -> Unit)? = null): Promise<T>
+    fun then(onFulfill: (T) -> Unit, onReject: ((Throwable) -> Unit)? = null): Promise<T>
 
     /**
      * Attaches a callback for only the resolution of the [Promise].
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
-     * The returned [Promise] is a new [Promise] that is either resolved with the value returned by the callback
+     * The returned [Promise] is a new [Promise] that is either fulfilled with the value returned by the callback
      * or rejected with the reason why the callback threw an error.
      *
-     * If the [onResolve] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     * If the [onFulfill] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
      */
-    fun <U> map(onResolve: (T) -> U): Promise<U>
+    fun <U> map(onFulfill: (T) -> U): Promise<U>
 
     /**
-     * Returns a [Promise] that is either resolved or rejected with the same value or reason as the original,
+     * Returns a [Promise] that is either fulfilled or rejected with the same value or reason as the original,
      * or rejected after the provided [duration] with a [PromiseTimeoutException].
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
@@ -60,12 +60,12 @@ interface Promise<T> {
     fun timeout(duration: Duration): Promise<T>
 
     /**
-     * Returns a [Promise] that is either resolved with the value of the original [Promise] or
-     * resolved with the provided [value] if the original [Promise] is rejected.
+     * Returns a [Promise] that is either fulfilled with the value of the original [Promise] or
+     * fulfilled with the provided [value] if the original [Promise] is rejected.
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
-     * If the [Promise] is rejected, the returned [Promise] is resolved with the provided [value].
+     * If the [Promise] is rejected, the returned [Promise] is fulfilled with the provided [value].
      */
     fun orElse(value: T): Promise<T>
 
@@ -74,7 +74,7 @@ interface Promise<T> {
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
-     * The returned [Promise] is a new [Promise] that is either resolved with the value returned by the callback
+     * The returned [Promise] is a new [Promise] that is either fulfilled with the value returned by the callback
      * or rejected with the reason why the callback threw an error.
      *
      * If the [onReject] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
@@ -86,7 +86,7 @@ interface Promise<T> {
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
-     * The returned [Promise] is a new [Promise] that is either resolved with the same value or rejected with the reason
+     * The returned [Promise] is a new [Promise] that is either fulfilled with the same value or rejected with the reason
      * provided by the callback.
      *
      * If the [onReject] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
@@ -96,7 +96,7 @@ interface Promise<T> {
     /**
      * Attaches a callback that is invoked when the [Promise] is settled (fulfilled or rejected).
      *
-     * The returned [Promise] is a new [Promise] that is either resolved or rejected
+     * The returned [Promise] is a new [Promise] that is either fulfilled or rejected
      * with the same value or reason as the original.
      *
      * If the [onFinally] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
@@ -108,7 +108,7 @@ interface Promise<T> {
      *
      * If the [Promise] is already settled, the value is returned immediately.
      *
-     * This function suspends the current coroutine until the [Promise] is resolved or rejected.
+     * This function suspends the current coroutine until the [Promise] is fulfilled or rejected.
      *
      * If the [Promise] is rejected, the [Throwable] is thrown.
      */

@@ -11,7 +11,7 @@ interface PromiseResult<T> {
     val state: PromiseState
 
     /**
-     * The value of the [Promise] if it has been resolved.
+     * The value of the [Promise] if it has been fulfilled.
      */
     val value: T?
 

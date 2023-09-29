@@ -11,9 +11,9 @@ enum class PromiseState {
     PENDING,
 
     /**
-     * The [Promise] has been resolved with a value.
+     * The [Promise] has been fulfilled with a value.
      */
-    RESOLVED,
+    FULFILLED,
 
     /**
      * The [Promise] has been rejected with a reason.

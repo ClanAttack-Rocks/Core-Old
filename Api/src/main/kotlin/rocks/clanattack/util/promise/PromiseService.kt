@@ -17,8 +17,8 @@ interface PromiseService : Service {
     fun <T> create(): PromiseProvider<T>
 
     /**
-     * Takes multiple [promises] and returns a new [Promise] that is resolved with a list of the values of the
-     * [promises] when all of the [promises] are resolved.
+     * Takes multiple [promises] and returns a new [Promise] that is fulfilled with a list of the results of the
+     * [promises] when all of the [promises] are fulfilled.
      *
      * If any of the [promises] is rejected, the [Promise] returned by this method is rejected with the reason of the
      * first rejected [Promise].
@@ -26,13 +26,13 @@ interface PromiseService : Service {
     fun <T> all(vararg promises: Promise<T>): Promise<List<T>>
 
     /**
-     * Takes multiple [promises] and returns a new [Promise] that is resolved with a list of the results of the
+     * Takes multiple [promises] and returns a new [Promise] that is fulfilled with a list of the results of the
      * [promises] when all of the [promises] are settled.
      */
     fun <T> allSettled(vararg promises: Promise<T>): Promise<List<PromiseResult<T>>>
 
     /**
-     * Takes multiple [promises] and returns a new [Promise] that is resolved with the value of the first resolved
+     * Takes multiple [promises] and returns a new [Promise] that is fulfilled with the value of the first fulfilled
      * [Promise].
      *
      * If all of the [promises] are rejected, the [Promise] returned by this method is rejected with a
@@ -41,7 +41,7 @@ interface PromiseService : Service {
     fun <T> any(vararg promises: Promise<T>): Promise<T>
 
     /**
-     * Takes multiple [promises] and returns a new [Promise] that is resolved or rejected with the value or reason of
+     * Takes multiple [promises] and returns a new [Promise] that is fulfilled or rejected with the value or reason of
      * the first [Promise] that settles.
      */
     fun <T> race(vararg promises: Promise<T>): Promise<T>
@@ -52,8 +52,8 @@ interface PromiseService : Service {
     fun <T> reject(reason: Throwable): Promise<T>
 
     /**
-     * Returns a [Promise] that is resolved with the given [value].
+     * Returns a [Promise] that is fulfilled with the given [value].
      */
-    fun <T> resolve(value: T): Promise<T>
+    fun <T> fulfill(value: T): Promise<T>
 
 }
