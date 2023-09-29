@@ -47,13 +47,13 @@ interface PromiseService : Service {
     fun <T> race(vararg promises: Promise<T>): Promise<T>
 
     /**
-     * Returns a [Promise] that is rejected with the given [reason].
-     */
-    fun <T> reject(reason: Throwable): Promise<T>
-
-    /**
      * Returns a [Promise] that is fulfilled with the given [value].
      */
     fun <T> fulfill(value: T): Promise<T>
+
+    /**
+     * Returns a [Promise] that is rejected with the given [reason].
+     */
+    fun <T> reject(reason: Throwable): Promise<T>
 
 }

@@ -28,7 +28,13 @@ interface Promise<T> {
     val state: PromiseState
 
     /**
-     * Attaches callbacks for the resolution and/or rejection of the [Promise].
+     * Whether the [Promise] is settled (fulfilled or rejected).
+     */
+    val isSettled: Boolean
+        get() = state != PromiseState.PENDING
+
+    /**
+     * Attaches callbacks for the fulfillment of the [Promise].
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
@@ -36,8 +42,24 @@ interface Promise<T> {
      * with the same value or reason as the original.
      *
      * If the [onFulfill] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
      */
-    fun then(onFulfill: (T) -> Unit, onReject: ((Throwable) -> Unit)? = null): Promise<T>
+    fun then(onFulfill: (T) -> Unit): Promise<T>
+
+    /**
+     * Attaches callbacks for the resolution of the [Promise].
+     *
+     * If the [Promise] is already settled, the corresponding callback will be executed immediately.
+     *
+     * The returned [Promise] is a new [Promise] that is either fulfilled or rejected
+     * with the same value or reason as the original.
+     *
+     * If the [onFulfill] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
+     */
+    fun then(onFulfill: (T) -> Unit, onReject: (Throwable) -> Unit): Promise<T>
 
     /**
      * Attaches a callback for only the resolution of the [Promise].
@@ -48,6 +70,8 @@ interface Promise<T> {
      * or rejected with the reason why the callback threw an error.
      *
      * If the [onFulfill] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
      */
     fun <U> map(onFulfill: (T) -> U): Promise<U>
 
@@ -56,6 +80,8 @@ interface Promise<T> {
      * or rejected after the provided [duration] with a [PromiseTimeoutException].
      *
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
+     *
+     * A new [Promise] is always created and returned.
      */
     fun timeout(duration: Duration): Promise<T>
 
@@ -66,6 +92,8 @@ interface Promise<T> {
      * If the [Promise] is already settled, the corresponding callback will be executed immediately.
      *
      * If the [Promise] is rejected, the returned [Promise] is fulfilled with the provided [value].
+     *
+     * A new [Promise] is always created and returned.
      */
     fun orElse(value: T): Promise<T>
 
@@ -78,6 +106,8 @@ interface Promise<T> {
      * or rejected with the reason why the callback threw an error.
      *
      * If the [onReject] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
      */
     fun catch(onReject: (Throwable) -> Unit): Promise<T>
 
@@ -90,6 +120,8 @@ interface Promise<T> {
      * provided by the callback.
      *
      * If the [onReject] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
      */
     fun catchMap(onReject: (Throwable) -> Throwable): Promise<T>
 
@@ -100,6 +132,8 @@ interface Promise<T> {
      * with the same value or reason as the original.
      *
      * If the [onFinally] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
      */
     fun finally(onFinally: (PromiseResult<T>) -> Unit): Promise<T>
 
