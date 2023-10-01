@@ -2,6 +2,7 @@ package rocks.clanattack.impl.util
 
 import rocks.clanattack.entry.registry
 
+@Suppress("unused")
 object JavaRegistry {
 
     @JvmStatic

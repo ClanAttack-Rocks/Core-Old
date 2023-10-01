@@ -8,6 +8,7 @@ import org.bukkit.event.HandlerList
  *
  * @property key The key of the setting that was deleted.
  */
+@Suppress("unused")
 class PluginSettingDeletedEvent(val key: String) : Event() {
 
     /**

@@ -10,6 +10,7 @@ import kotlin.time.Duration
  *
  * For this it uses papers scheduler system.
  */
+@Suppress("unused")
 interface TaskService : Service {
 
     /**

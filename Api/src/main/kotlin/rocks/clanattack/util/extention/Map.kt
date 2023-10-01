@@ -27,7 +27,7 @@ inline fun <K, V> Map<out K, V>.mapToJson(crossinline transform: JsonDocument.(M
     map { json { transform(it) } }
 
 /**
- * Filters out an null values in the [Map]
+ * Filters out a null values in the [Map]
  *
  * @receiver The map to filter
  * @return the filtered map

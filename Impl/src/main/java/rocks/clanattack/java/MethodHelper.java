@@ -14,6 +14,7 @@ public class MethodHelper {
         return method.getDeclaringClass().getName() + "#" + method.getName();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public static <T> T call(Method method, Class<T> resultType, Object... args) throws InvocationTargetException, IllegalAccessException {
         if (method.getParameterCount() > args.length)
             throw new IllegalArgumentException("Function " + getFullName(method) + " can have at most " + args.length + " parameters.");

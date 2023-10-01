@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package rocks.clanattack.minecraft.inventory
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem

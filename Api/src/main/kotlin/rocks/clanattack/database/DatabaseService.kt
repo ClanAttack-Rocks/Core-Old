@@ -9,6 +9,7 @@ import kotlin.reflect.KClass
 /**
  * The [DatabaseService] integrates with [SurrealDB](https://surrealdb.com/) to provide access to the database.
  */
+@Suppress("unused")
 interface DatabaseService : Service {
 
     /**
@@ -146,6 +147,7 @@ interface DatabaseService : Service {
  * The [query] can contain multiple statements (separated by `;`) for each statement a [QueryResult],
  * that tries to parse the result into the given [type][T], will be returned.
  */
+@Suppress("unused")
 inline fun <reified T : Any> DatabaseService.query(
     query: String,
     args: Map<String, String> = emptyMap(),
@@ -157,6 +159,7 @@ inline fun <reified T : Any> DatabaseService.query(
  * The [query] can contain multiple statements (separated by `;`), however only the first statement will be
  * evaluated and the result will be returned. With this the api will try to parse the result into the given [type][T].
  */
+@Suppress("unused")
 inline fun <reified T : Any> DatabaseService.singleQuery(
     query: String,
     args: Map<String, String> = emptyMap(),
@@ -168,5 +171,6 @@ inline fun <reified T : Any> DatabaseService.singleQuery(
  * This will preserve the existing data in the database and only override the given fields,
  * all changed records will be parsed into the given [type][P] and returned.
  */
+@Suppress("unused")
 inline fun <reified T : Any, reified P : Any> DatabaseService.merge(thing: String, merge: T) =
     this.merge(thing, merge, P::class)

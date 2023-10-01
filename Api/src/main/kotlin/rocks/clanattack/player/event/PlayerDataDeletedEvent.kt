@@ -10,6 +10,7 @@ import rocks.clanattack.player.Player
  * @property player The player whose data entry was deleted.
  * @property key The key of the data entry that was deleted.
  */
+@Suppress("unused")
 class PlayerDataDeletedEvent(val player: Player, val key: String) : Event() {
 
     /**

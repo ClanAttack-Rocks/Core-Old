@@ -11,6 +11,7 @@ import org.bukkit.event.Event
  * @property oldValue The old value of the setting.
  * @property newValue The new value of the setting.
  */
+@Suppress("MemberVisibilityCanBePrivate")
 abstract class PluginSettingUpdatedEvent(val key: String, val oldValue: String, val newValue: String) : Event() {
 
     /**
@@ -28,9 +29,11 @@ abstract class PluginSettingUpdatedEvent(val key: String, val oldValue: String, 
 /**
  * Gets the old value of the setting and maps it to the given [type][T].
  */
+@Suppress("unused")
 inline fun <reified T : Any> PluginSettingUpdatedEvent.getOldValue() = getOldValue(T::class.java)
 
 /**
  * Gets the new value of the setting and maps it to the given [type][T].
  */
+@Suppress("unused")
 inline fun <reified T : Any> PluginSettingUpdatedEvent.getNewValue() = getNewValue(T::class.java)

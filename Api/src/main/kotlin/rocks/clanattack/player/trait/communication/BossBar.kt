@@ -11,6 +11,7 @@ import rocks.clanattack.player.Player
 /**
  * A [BossBar] is a bar that is displayed at the top of the screen.
  */
+@Suppress("unused")
 interface BossBar {
 
     /**

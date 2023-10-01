@@ -6,6 +6,7 @@ import java.util.UUID
 /**
  * The [FetchingService] is used to map uuids or names from mojang.
  */
+@Suppress("unused")
 interface FetchingService : Service {
 
     /**

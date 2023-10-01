@@ -7,6 +7,7 @@ import rocks.clanattack.entry.service.Service
 /**
  * The [DiscordService] is used to interact with the Discord API.
  */
+@Suppress("unused")
 interface DiscordService : Service {
 
     /**

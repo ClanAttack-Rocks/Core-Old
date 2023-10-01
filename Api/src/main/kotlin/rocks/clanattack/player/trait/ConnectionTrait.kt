@@ -6,6 +6,7 @@ import kotlin.time.Duration
 /**
  * The [ConnectionTrait] is used to get information about the player's connection.
  */
+@Suppress("unused")
 interface ConnectionTrait {
 
     /**

@@ -11,6 +11,7 @@ import java.util.*
 /**
  * A [Player] is a wrapper around a [MinecraftPlayer] that provides additional functionality.
  */
+@Suppress("unused")
 interface Player {
 
     /**

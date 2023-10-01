@@ -8,6 +8,7 @@ import net.kyori.adventure.text.ComponentLike
  *
  * @see Language.getMessage
  */
+@Suppress("unused")
 interface Replacement {
 
     /**

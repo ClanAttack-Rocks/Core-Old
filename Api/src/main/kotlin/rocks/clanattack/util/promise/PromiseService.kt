@@ -2,7 +2,6 @@ package rocks.clanattack.util.promise
 
 import rocks.clanattack.entry.service.Service
 import rocks.clanattack.util.promise.exception.AllPromiseRejectedException
-import kotlin.reflect.KClass
 
 /**
  * The [PromiseService] is used to create [Promise]s.

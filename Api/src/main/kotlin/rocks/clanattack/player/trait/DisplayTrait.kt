@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.NamedTextColor
 /**
  * The [DisplayTrait] is used to get information on how the player is displayed.
  */
+@Suppress("unused")
 interface DisplayTrait {
 
     /**
