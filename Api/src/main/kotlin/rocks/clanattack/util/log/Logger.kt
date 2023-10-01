@@ -8,12 +8,12 @@ interface Logger {
     /**
      * Prints an informational message.
      */
-    fun info(message: String)
+    fun info(message: String, throwable: Throwable? = null)
 
     /**
      * Prints a warning message.
      */
-    fun warn(message: String)
+    fun warn(message: String, throwable: Throwable? = null)
 
     /**
      * Prints an error message.
