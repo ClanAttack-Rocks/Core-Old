@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package rocks.clanattack.util.json
 
 import rocks.clanattack.entry.find

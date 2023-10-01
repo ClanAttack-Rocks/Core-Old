@@ -3,6 +3,7 @@ package rocks.clanattack.player.trait.communication
 /**
  * The priority of a communication with a player.
  */
+@Suppress("unused")
 enum class CommunicationPriority {
 
     /**

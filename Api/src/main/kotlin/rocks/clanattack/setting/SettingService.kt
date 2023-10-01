@@ -1,7 +1,6 @@
 package rocks.clanattack.setting
 
 import rocks.clanattack.entry.service.Service
-import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 
 /**
@@ -12,6 +11,7 @@ import kotlin.reflect.KClass
  *
  * The keys are case-sensitive.
  */
+@Suppress("unused")
 interface SettingService : Service {
 
     /**

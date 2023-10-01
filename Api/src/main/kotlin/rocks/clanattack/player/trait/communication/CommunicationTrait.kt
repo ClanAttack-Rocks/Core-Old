@@ -15,6 +15,7 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * The [CommunicationTrait] is used to communicate with the player.
  */
+@Suppress("unused")
 interface CommunicationTrait {
 
     /**

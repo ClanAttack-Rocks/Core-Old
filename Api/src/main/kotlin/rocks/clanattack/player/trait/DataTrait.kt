@@ -8,6 +8,7 @@ import kotlin.reflect.KClass
  * Data is stored as key-value pairs where the key and value is always a [String].
  * However, the trait can map the value to a different type.
  */
+@Suppress("unused")
 interface DataTrait {
 
     /**

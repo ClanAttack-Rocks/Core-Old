@@ -7,6 +7,7 @@ import kotlin.time.Duration
 /**
  * The [DateTimeService] is used to format dates and times.
  */
+@Suppress("unused")
 interface DateTimeService : Service {
 
     /**

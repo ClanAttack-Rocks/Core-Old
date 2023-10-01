@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package rocks.clanattack.util.extention
 
 import kotlin.time.Duration

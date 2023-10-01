@@ -5,6 +5,7 @@ import rocks.clanattack.entry.service.Service
 /**
  * The [LanguageService] is used to store languages in the database.
  */
+@Suppress("unused")
 interface LanguageService : Service {
 
     /**

@@ -8,6 +8,7 @@ import java.util.UUID
 /**
  * The [PlayerService] is used to interact with [Player]s.
  */
+@Suppress("unused")
 interface PlayerService : Service {
 
     /**

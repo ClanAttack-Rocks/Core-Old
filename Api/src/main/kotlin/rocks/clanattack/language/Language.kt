@@ -9,6 +9,7 @@ import net.kyori.adventure.text.ComponentLike
  * where the key is always a [String] and
  * the value is a mini-message.
  */
+@Suppress("unused")
 interface Language {
 
     /**
