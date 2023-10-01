@@ -140,12 +140,21 @@ interface Promise<T> {
     /**
      * Awaits the resolution of the [Promise].
      *
+     * This function suspends the current coroutine until the [Promise] is settled.
+     *
      * If the [Promise] is already settled, the value is returned immediately.
-     *
-     * This function suspends the current coroutine until the [Promise] is fulfilled or rejected.
-     *
      * If the [Promise] is rejected, the [Throwable] is thrown.
      */
     suspend fun await(): T
+
+    /**
+     * Gets the value of the [Promise].
+     *
+     * This function blocks the current thread until the [Promise] is settled.
+     *
+     * If the [Promise] is already settled, the value is returned immediately.
+     * If the [Promise] is rejected, the [Throwable] is thrown.
+     */
+    fun get(): T
 
 }

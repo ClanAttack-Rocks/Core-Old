@@ -1,5 +1,6 @@
 package rocks.clanattack.impl.util.promise
 
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import rocks.clanattack.entry.find
 import rocks.clanattack.impl.task.TaskService
@@ -336,6 +337,14 @@ class Promise<T>(
             )
         }
 
+        PromiseState.FULFILLED -> value!!
+        PromiseState.REJECTED -> throw reason!!
+    }
+
+    override fun get(): T = when (state) {
+        PromiseState.PENDING -> {
+            runBlocking { await() }
+        }
         PromiseState.FULFILLED -> value!!
         PromiseState.REJECTED -> throw reason!!
     }
