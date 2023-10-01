@@ -1,6 +1,7 @@
 package rocks.clanattack.task
 
 import rocks.clanattack.entry.service.Service
+import rocks.clanattack.util.promise.Promise
 import java.util.concurrent.CompletableFuture
 import kotlin.time.Duration
 
@@ -49,8 +50,22 @@ interface TaskService : Service {
     }, task)
 
     /**
-     * Executes the given [block] detached (now) and returns the result as a [CompletableFuture].
+     * Executes the given [task]
+     * - detached,
+     * - asynchronous,
+     * - now and
+     * - exactly once
+     *
+     * and returns the result as a [Promise].
      */
+    fun <T> promise(task: suspend Task.() -> T): Promise<T>
+
+    /**
+     * Executes the given [block] detached (now) and returns the result as a [CompletableFuture].
+     *
+     * **DEPRECIATED** Use [promise] instead.
+     */
+    @Deprecated("Use promise instead", ReplaceWith("promise(block)"))
     fun <T> asCompletableFuture(block: suspend Task.() -> T): CompletableFuture<T>
 
 }
