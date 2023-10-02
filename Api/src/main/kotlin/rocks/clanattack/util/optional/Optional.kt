@@ -5,7 +5,7 @@ package rocks.clanattack.util.optional
  *
  * @property value The value of the optional.
  */
-class Optional<T : Any>(val value: T?) {
+data class Optional<T : Any>(val value: T?) {
 
     /**
      * Whether the optional is empty.
