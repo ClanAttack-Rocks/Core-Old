@@ -1,34 +1,70 @@
 package rocks.clanattack.impl.minecraft.fetching
 
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
+import rocks.clanattack.impl.util.ktor.ktor
 import rocks.clanattack.task.TaskService
+import rocks.clanattack.util.json.get
+import rocks.clanattack.util.json.json
+import rocks.clanattack.util.optional.asOptional
+import rocks.clanattack.util.optional.Optional
 import java.util.*
 import rocks.clanattack.minecraft.fetching.FetchingService as Interface
 
 @Register(definition = Interface::class)
 class FetchingService : ServiceImplementation(), Interface {
 
-    private val uuidUrl = "https://api.mojang.com/users/profiles/minecraft/%s"
-    private val nameUrl = "https://api.mojang.com/user/profile/%s"
-
     private val uuidCache = mutableMapOf<String, UUID>()
     private val nameCache = mutableMapOf<UUID, String>()
-    override fun getUuid(name: String) = find<TaskService>().promise {
-        if (name in uuidCache) return@promise uuidCache[name]
 
-        TODO("Call the uuidUrl with the name and return the uuid (id in the returned json object), than cache it and the name")
+    override fun getUuid(name: String) = find<TaskService>().promise {
+        val lowerName = name.lowercase()
+        if (lowerName in uuidCache) return@promise uuidCache[name].asOptional()
+
+        val response = ktor.get("https://api.mojang.com/users/profiles/minecraft/$name")
+        if (!response.status.isSuccess()) return@promise Optional.empty()
+
+        try {
+            val json = json(response.bodyAsText())
+
+            val uuid = json.get<UUID>("id") ?: return@promise Optional.empty()
+            val realName = json.get<String>("name") ?: return@promise Optional.empty()
+
+            uuidCache[lowerName] = uuid
+            nameCache[uuid] = realName
+
+            uuid
+        } catch (e: IllegalArgumentException) {
+            null
+        }.asOptional()
     }
 
     override fun getName(uuid: UUID) = find<TaskService>().promise {
-        if (uuid in nameCache) return@promise nameCache[uuid]
+        if (uuid in nameCache) return@promise nameCache[uuid].asOptional()
 
-        TODO("Call the nameUrl with the uuid and return the name (name in the returned json object), than cache it and the uuid")
+        val response = ktor.get("https://sessionserver.mojang.com/session/minecraft/profile/$uuid")
+        if (!response.status.isSuccess()) return@promise Optional.empty()
+
+        try {
+            val json = json(response.bodyAsText())
+
+            val name = json.get<String>("name") ?: return@promise Optional.empty()
+
+            uuidCache[name.lowercase()] = uuid
+            nameCache[uuid] = name
+
+            name.asOptional()
+        } catch (e: IllegalArgumentException) {
+            Optional.empty()
+        }
     }
 
-    override fun existsUuid(uuid: UUID) = getName(uuid).map { it != null }
+    override fun existsUuid(uuid: UUID) = getName(uuid).map { it.isPresent }
 
-    override fun existsName(name: String) = getUuid(name).map { it != null }
+    override fun existsName(name: String) = getUuid(name).map { it.isPresent }
 
 }
