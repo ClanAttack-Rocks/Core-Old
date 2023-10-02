@@ -20,7 +20,7 @@ import kotlin.time.Duration
  *
  * When either of these options happens, the associated handlers queued up by a promise's then method are called.
  */
-interface Promise<T> {
+interface Promise<T : Any> {
 
     /**
      * The current state of the [Promise].
@@ -73,7 +73,7 @@ interface Promise<T> {
      *
      * A new [Promise] is always created and returned.
      */
-    fun <U> map(onFulfill: (T) -> U): Promise<U>
+    fun <U : Any> map(onFulfill: (T) -> U): Promise<U>
 
     /**
      * Returns a [Promise] that is either fulfilled or rejected with the same value or reason as the original,

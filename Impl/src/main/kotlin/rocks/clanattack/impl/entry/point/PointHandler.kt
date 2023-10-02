@@ -37,11 +37,6 @@ object PointHandler {
     }
 
     private fun callEntryPoints(annotated: List<Method>) = annotated.filter {
-        if (it.returnType != Void::class.java) {
-            find<Logger>().error("Entrypoint ${MethodHelper.getFullName(it)} doesn't return Unit/Void.")
-            return@filter false
-        }
-
         try {
             MethodHelper.call(it, registry)
             true
@@ -54,21 +49,15 @@ object PointHandler {
     fun callExitPoints() {
         find<Logger>().info("Calling exit points...")
 
-        val amount = AnnotationScanner.getAnnotatedMethods(ExitPoint::class.java)
-            .filter {
-                if (it.returnType != Void::class.java) {
-                    find<Logger>().error("Exit point ${MethodHelper.getFullName(it)} doesn't return Unit/Void.")
-                    return@filter false
-                }
-
-                try {
-                    MethodHelper.call(it, registry)
-                    true
-                } catch (e: Exception) {
-                    find<Logger>().error("Couldn't call exit point ${MethodHelper.getFullName(it)}", e.invocationCause)
-                    false
-                }
-            }.count()
+        val amount = AnnotationScanner.getAnnotatedMethods(ExitPoint::class.java).count {
+            try {
+                MethodHelper.call(it, registry)
+                true
+            } catch (e: Exception) {
+                find<Logger>().error("Couldn't call exit point ${MethodHelper.getFullName(it)}", e.invocationCause)
+                false
+            }
+        }
 
         find<Logger>().info("Called $amount exit points.")
     }
