@@ -7,6 +7,18 @@ package rocks.clanattack.util.optional
  */
 class Optional<T : Any>(val value: T?) {
 
+    /**
+     * Whether the optional is empty.
+     */
+    val isEmpty: Boolean
+        get() = value == null
+
+    /**
+     * Whether the optional is present.
+     */
+    val isPresent: Boolean
+        get() = value != null
+
     companion object {
 
         /**
