@@ -59,7 +59,7 @@ interface TaskService : Service {
      *
      * and returns the result as a [Promise].
      */
-    fun <T> promise(task: suspend Task.() -> T): Promise<T>
+    fun <T : Any> promise(task: suspend Task.() -> T): Promise<T>
 
     /**
      * Executes the given [block] detached (now) and returns the result as a [CompletableFuture].

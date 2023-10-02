@@ -2,6 +2,7 @@ package rocks.clanattack.impl.util.json
 
 import com.fasterxml.jackson.databind.JsonNode
 import rocks.clanattack.entry.service.Register
+import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.util.extention.filterNotNull
 import java.io.File
 import java.io.InputStream
@@ -9,7 +10,7 @@ import rocks.clanattack.util.json.JsonDocument as JsonDocumentInterface
 import rocks.clanattack.util.json.JsonDocumentService as Interface
 
 @Register(definition = Interface::class)
-class JsonDocumentService : Interface {
+class JsonDocumentService : ServiceImplementation(), Interface {
 
     override fun empty() = JsonDocument()
 
