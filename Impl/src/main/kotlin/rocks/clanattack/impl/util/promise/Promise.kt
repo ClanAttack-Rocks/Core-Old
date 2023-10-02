@@ -15,7 +15,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.time.Duration
 import rocks.clanattack.util.promise.Promise as Interface
 
-class Promise<T>(
+class Promise<T : Any>(
     @Volatile override var state: PromiseState = PromiseState.PENDING,
     private var value: T? = null,
     private var reason: Throwable? = null
@@ -117,7 +117,7 @@ class Promise<T>(
         }
     }
 
-    override fun <U> map(onFulfill: (T) -> U): Interface<U> = when (state) {
+    override fun <U : Any> map(onFulfill: (T) -> U): Interface<U> = when (state) {
         PromiseState.PENDING -> {
             val promise = Promise<U>()
 

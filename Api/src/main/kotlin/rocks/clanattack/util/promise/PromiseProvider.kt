@@ -10,7 +10,7 @@ package rocks.clanattack.util.promise
  * However, if a [Promise] is created by the user of the service, it should be able to be fulfilled or rejected by the
  * user.
  */
-interface PromiseProvider<T> : Promise<T> {
+interface PromiseProvider<T : Any> : Promise<T> {
 
     /**
      * Fulfill the [Promise] with the given value.
