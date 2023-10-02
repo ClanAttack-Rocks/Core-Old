@@ -10,9 +10,9 @@ import rocks.clanattack.util.promise.Promise as PromiseInterface
 
 @Register(definition = Interface::class)
 class PromiseService : ServiceImplementation(), Interface {
-    override fun <T> create(): PromiseProvider<T> = Promise()
+    override fun <T : Any> create(): PromiseProvider<T> = Promise()
 
-    override fun <T> all(vararg promises: PromiseInterface<T>): PromiseInterface<List<T>> {
+    override fun <T : Any> all(vararg promises: PromiseInterface<T>): PromiseInterface<List<T>> {
         val promise = Promise<List<T>>()
         var count = promises.size
         val results = mutableListOf<T>()
@@ -31,7 +31,7 @@ class PromiseService : ServiceImplementation(), Interface {
         return promise
     }
 
-    override fun <T> allSettled(vararg promises: PromiseInterface<T>): rocks.clanattack.util.promise.Promise<List<PromiseResult<T>>> {
+    override fun <T : Any> allSettled(vararg promises: PromiseInterface<T>): rocks.clanattack.util.promise.Promise<List<PromiseResult<T>>> {
         val promise = Promise<List<PromiseResult<T>>>()
         var count = promises.size
         val results = mutableListOf<PromiseResult<T>>()
@@ -48,7 +48,7 @@ class PromiseService : ServiceImplementation(), Interface {
         return promise
     }
 
-    override fun <T> any(vararg promises: PromiseInterface<T>): PromiseInterface<T> {
+    override fun <T : Any> any(vararg promises: PromiseInterface<T>): PromiseInterface<T> {
         val promise = Promise<T>()
         var count = promises.size
         val reasons = mutableListOf<Throwable>()
@@ -73,11 +73,11 @@ class PromiseService : ServiceImplementation(), Interface {
                 )
             }
         }
-        
+
         return promise
     }
 
-    override fun <T> race(vararg promises: PromiseInterface<T>): PromiseInterface<T> {
+    override fun <T : Any> race(vararg promises: PromiseInterface<T>): PromiseInterface<T> {
         val promise = Promise<T>()
 
         promises.forEach {
@@ -91,12 +91,12 @@ class PromiseService : ServiceImplementation(), Interface {
         return promise
     }
 
-    override fun <T> fulfill(value: T): PromiseInterface<T>  = Promise(
+    override fun <T : Any> fulfill(value: T): PromiseInterface<T> = Promise(
         state = rocks.clanattack.util.promise.PromiseState.FULFILLED,
         value = value
     )
 
-    override fun <T> reject(reason: Throwable): PromiseInterface<T> = Promise(
+    override fun <T : Any> reject(reason: Throwable): PromiseInterface<T> = Promise(
         state = rocks.clanattack.util.promise.PromiseState.REJECTED,
         reason = reason
     )

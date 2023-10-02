@@ -21,6 +21,8 @@ public class MethodHelper {
 
         var parameters = new ArrayList<>();
         for (var i = 0; i < args.length; i++) {
+            if (method.getParameterCount() <= i) break;
+
             var parameter = method.getParameters()[i];
             if (parameter.getType().isInstance(args[i])) parameters.add(args[i]);
             else

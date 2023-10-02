@@ -30,7 +30,7 @@ class TaskService : ServiceImplementation(), Interface {
                 else AttachedExecutor.runTask(it, task)
             }
 
-    override fun <T> promise(task: suspend Task.() -> T): Promise<T> {
+    override fun <T : Any> promise(task: suspend Task.() -> T): Promise<T> {
         val promise = find<PromiseService>().create<T>()
 
         execute(detached = true) {

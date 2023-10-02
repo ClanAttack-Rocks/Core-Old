@@ -1,6 +1,8 @@
 package rocks.clanattack.database
 
 import rocks.clanattack.entry.service.Service
+import rocks.clanattack.util.optional.Optional
+import rocks.clanattack.util.optional.asOptional
 import rocks.clanattack.util.promise.Promise
 import java.util.UUID
 import java.util.concurrent.CompletableFuture
@@ -75,7 +77,7 @@ interface DatabaseService : Service {
         query: String,
         type: KClass<T>,
         args: Map<String, String> = emptyMap(),
-    ): Promise<QueryResult<T>?> = this.query(query, type, args).map { it.firstOrNull() }
+    ): Promise<Optional<QueryResult<T>>> = this.query(query, type, args).map { it.firstOrNull().asOptional() }
 
     /**
      * Selects all records that match the given [thing] and tries to parse them into the given [type].
@@ -91,8 +93,8 @@ interface DatabaseService : Service {
      * @throws IllegalStateException If the data got from the database could not be parsed into the given [type].
      */
     @Throws(IllegalStateException::class)
-    fun <T : Any> singleSelect(thing: String, type: KClass<T>): Promise<T?> =
-        this.select(thing, type).map { it.firstOrNull() }
+    fun <T : Any> singleSelect(thing: String, type: KClass<T>): Promise<Optional<T>> =
+        this.select(thing, type).map { it.firstOrNull().asOptional() }
 
     /**
      * Creates the given [data] in the given [thing].
