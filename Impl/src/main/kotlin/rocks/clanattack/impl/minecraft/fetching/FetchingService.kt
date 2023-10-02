@@ -1,12 +1,13 @@
 package rocks.clanattack.impl.minecraft.fetching
 
+import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
-import rocks.clanattack.impl.util.ktor.ktor
+import rocks.clanattack.impl.util.ktor.Ktor
 import rocks.clanattack.task.TaskService
 import rocks.clanattack.util.json.get
 import rocks.clanattack.util.json.json
@@ -15,7 +16,7 @@ import rocks.clanattack.util.optional.Optional
 import java.util.*
 import rocks.clanattack.minecraft.fetching.FetchingService as Interface
 
-@Register(definition = Interface::class)
+@Register(definition = Interface::class, depends = [Ktor::class])
 class FetchingService : ServiceImplementation(), Interface {
 
     private val uuidCache = mutableMapOf<String, UUID>()
@@ -25,7 +26,7 @@ class FetchingService : ServiceImplementation(), Interface {
         val lowerName = name.lowercase()
         if (lowerName in uuidCache) return@promise uuidCache[name].asOptional()
 
-        val response = ktor.get("https://api.mojang.com/users/profiles/minecraft/$name")
+        val response = find<HttpClient>().get("https://api.mojang.com/users/profiles/minecraft/$name")
         if (!response.status.isSuccess()) return@promise Optional.empty()
 
         try {
@@ -46,7 +47,7 @@ class FetchingService : ServiceImplementation(), Interface {
     override fun getName(uuid: UUID) = find<TaskService>().promise {
         if (uuid in nameCache) return@promise nameCache[uuid].asOptional()
 
-        val response = ktor.get("https://sessionserver.mojang.com/session/minecraft/profile/$uuid")
+        val response = find<HttpClient>().get("https://sessionserver.mojang.com/session/minecraft/profile/$uuid")
         if (!response.status.isSuccess()) return@promise Optional.empty()
 
         try {
