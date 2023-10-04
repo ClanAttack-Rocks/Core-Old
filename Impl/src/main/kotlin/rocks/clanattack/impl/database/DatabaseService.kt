@@ -1,5 +1,10 @@
 package rocks.clanattack.impl.database
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinFeature
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.http.*
 import org.bukkit.plugin.java.JavaPlugin
 import rocks.clanattack.database.ChangeType
@@ -11,6 +16,7 @@ import rocks.clanattack.database.DatabaseService as Interface
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.database.websocket.WebSocketSender
 import rocks.clanattack.impl.database.websocket.Websocket
+import rocks.clanattack.impl.util.json.JsonDocumentModule
 import rocks.clanattack.util.extention.alsoIf
 import rocks.clanattack.util.json.JsonDocument
 import rocks.clanattack.util.json.get
@@ -90,51 +96,28 @@ class DatabaseService : ServiceImplementation(), Interface {
         table: String,
         type: KClass<T>,
         callback: (ChangeType, String, T?) -> Unit
-    ): Promise<UUID> {
-        TODO("Not yet implemented")
-    }
+    ) = sender.send<UUID>("live", table, false)
+        .then { sender.addLiveListener(it, type, callback) }
 
-    override fun liveQuery(table: String, callback: (ChangeType, String, List<Patch>) -> Unit): Promise<UUID> {
-        TODO("Not yet implemented")
-    }
-
-    override fun killLiveQuery(id: UUID): Promise<Unit> {
-        TODO("Not yet implemented")
-    }
+    override fun killLiveQuery(id: UUID) = sender.send<Unit>("kill", id)
 
     override fun <T : Any> query(
         query: String,
-        type: KClass<T>,
         args: Map<String, String>
-    ): Promise<List<QueryResult<T>>> {
-        TODO("Not yet implemented")
-    }
+    ) = sender.send<List<QueryResult<T>>>("query", query, args)
 
-    override fun <T : Any> select(thing: String, type: KClass<T>): Promise<List<T>> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any> select(thing: String) = sender.send<List<T>>("select", thing)
 
-    override fun <T : Any> create(thing: String, data: T): Promise<T> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any> create(thing: String, vararg data: T) = sender.send<List<T>>("create", thing, data.toList())
 
-    override fun <T : Any> create(thing: String, data: List<T>): Promise<List<T>> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any> update(thing: String, data: T) =
+        sender.send("update", data::class, thing, data).map { it }
 
-    override fun <T : Any> update(thing: String, data: T): Promise<T> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any, P : Any> merge(thing: String, merge: T) =
+        sender.send<List<P>>("merge", thing, merge)
 
-    override fun <T : Any, P : Any> merge(thing: String, merge: T, type: KClass<P>): Promise<List<P>> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any> patch(thing: String, patches: List<Patch>) =
+        sender.send<List<T>>("patch", thing, patches, false)
 
-    override fun <T : Any> patch(thing: String, patches: List<Patch>, type: KClass<T>): Promise<T> {
-        TODO("Not yet implemented")
-    }
-
-    override fun delete(thing: String): Promise<Unit> {
-        TODO("Not yet implemented")
-    }
+    override fun delete(thing: String) = sender.send<Unit>("delete", thing)
 }
