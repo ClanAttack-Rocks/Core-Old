@@ -59,17 +59,17 @@ class Websocket {
 
                 try {
                     for (frame in incoming) {
-                        when (frame) {
+                        val remove = when (frame) {
                             is Frame.Text -> json(frame.readText())
                                 .let { listeners.filter { listener -> listener(it) } }
-                                .forEach { listeners.remove(it) }
 
                             is Frame.Binary -> json(frame.readBytes().toString(Charsets.UTF_8))
                                 .let { listeners.filter { listener -> listener(it) } }
-                                .forEach { listeners.remove(it) }
 
-                            else -> {}
+                            else -> emptyList()
                         }
+
+                        listeners.removeAll(remove)
                     }
                 } catch (_: ClosedReceiveChannelException) {
                 }
