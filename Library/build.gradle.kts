@@ -49,7 +49,7 @@ tasks{
             project(":Library").buildDir.resolve("libs")
                 .listFiles()
                 ?.firstOrNull { !it.nameWithoutExtension.endsWith("-dev") }
-                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("Library.jar"), true)
+                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("library.jar"), true)
         }
     }
 }

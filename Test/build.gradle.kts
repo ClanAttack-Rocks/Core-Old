@@ -25,7 +25,7 @@ tasks {
             project(":Test").buildDir.resolve("libs")
                 .listFiles()
                 ?.firstOrNull { !it.nameWithoutExtension.endsWith("-dev") }
-                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("Test.jar"), true)
+                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("test.jar"), true)
         }
     }
 }

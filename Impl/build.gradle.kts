@@ -35,7 +35,7 @@ tasks {
             project(":Impl").buildDir.resolve("libs")
                 .listFiles()
                 ?.firstOrNull { !it.nameWithoutExtension.endsWith("-dev") }
-                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("Impl.jar"), true)
+                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("core.jar"), true)
         }
     }
 }
