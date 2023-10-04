@@ -82,14 +82,19 @@ interface DatabaseService : Service {
         this.select<T>(thing).map { it.firstOrNull().asOptional() }
 
     /**
+     * Creates the given [data] in the given [thing].
+     */
+    fun <T : Any> create(thing: String, data: T): Promise<T>
+
+    /**
      * Inserts the given [data] in the given [thing].
      */
-    fun <T : Any> create(thing: String, vararg data: T): Promise<List<T>>
+    fun <T : Any> insert(thing: String, vararg data: T): Promise<List<T>>
 
     /**
      * Creates the given [data] in the given [thing].
      */
-    fun <T : Any> createSingle(thing: String, data: T): Promise<T> = this.create(thing, data).map { it.first() }
+    fun <T : Any> insertSingle(thing: String, data: T): Promise<T> = this.insert(thing, data).map { it.first() }
 
     /**
      * Updates the given [data] in the given [thing].
