@@ -11,7 +11,14 @@ jobs:
           java-version: '17'
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
       - name: Execute Gradle build
-        run: ./gradlew buildProject
+        run: ./gradlew buildProject --no-daemon
+      - name: Copy JARs
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "build/libs/core.jar,build/libs/library.jar"
+          target: /plugins
