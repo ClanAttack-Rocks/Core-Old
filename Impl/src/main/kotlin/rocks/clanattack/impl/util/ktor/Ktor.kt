@@ -9,13 +9,12 @@ import rocks.clanattack.entry.service.Service
 import rocks.clanattack.entry.service.ServiceImplementation
 import kotlin.time.Duration.Companion.minutes
 
-interface KtorInterface : Service
+interface Ktor : Service
 
-@Register(definition = KtorInterface::class)
-class Ktor : ServiceImplementation(), KtorInterface {
+@Register(definition = Ktor::class)
+class KtorImplementation : ServiceImplementation(), Ktor {
 
-    lateinit var ktor: HttpClient
-        private set
+    private lateinit var ktor: HttpClient
 
     override fun enable() {
         ktor = HttpClient(CIO) {

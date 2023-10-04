@@ -8,6 +8,7 @@ import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.util.ktor.Ktor
+import rocks.clanattack.impl.util.ktor.KtorImplementation
 import rocks.clanattack.task.TaskService
 import rocks.clanattack.util.json.get
 import rocks.clanattack.util.json.json
