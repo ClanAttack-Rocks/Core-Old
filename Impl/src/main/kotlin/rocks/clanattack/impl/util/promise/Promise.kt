@@ -159,6 +159,56 @@ class Promise<T : Any>(
         PromiseState.REJECTED -> find<PromiseService>().reject(reason!!)
     }
 
+    override fun <U : Any> mapSuspend(onFulfill: suspend (T) -> U) = when(state) {
+        PromiseState.PENDING -> {
+            val promise = Promise<U>()
+
+            callback.add {
+                when (it.state) {
+                    PromiseState.FULFILLED -> {
+                        try {
+                            find<TaskService>().execute(detached = true) {
+                                val result = onFulfill(it.value!!)
+                                promise.fulfill(result)
+                            }
+                        } catch (e: Exception) {
+                            promise.reject(e)
+                        }
+                    }
+
+                    PromiseState.REJECTED -> {
+                        try {
+                            promise.reject(it.reason!!)
+                        } catch (e: Exception) {
+                            promise.reject(e)
+                        }
+                    }
+
+                    else -> throw IllegalStateException("Promise is still pending.")
+                }
+            }
+
+            promise
+        }
+
+        PromiseState.FULFILLED -> {
+            try {
+                val promise = Promise<U>()
+
+                find<TaskService>().execute(detached = true) {
+                    val result = onFulfill(value!!)
+                    promise.fulfill(result)
+                }
+
+                promise
+            } catch (e: Exception) {
+                find<PromiseService>().reject(e)
+            }
+        }
+
+        PromiseState.REJECTED -> find<PromiseService>().reject(reason!!)
+    }
+
     override fun timeout(duration: Duration): Interface<T> = when (state) {
         PromiseState.PENDING -> {
             val promise = Promise<T>()

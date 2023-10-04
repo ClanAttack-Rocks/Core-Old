@@ -76,6 +76,22 @@ interface Promise<T : Any> {
     fun <U : Any> map(onFulfill: (T) -> U): Promise<U>
 
     /**
+     * Attaches a callback for only the resolution of the [Promise].
+     *
+     * If the [Promise] is already settled, the corresponding callback will be executed immediately.
+     *
+     * The returned [Promise] is a new [Promise] that is either fulfilled with the value returned by the callback
+     * or rejected with the reason why the callback threw an error.
+     *
+     * If the [onFulfill] method throws an error, the returned [Promise] is rejected with the thrown error as the reason.
+     *
+     * A new [Promise] is always created and returned.
+     *
+     * The [onFulfill] method can suspend the current coroutine.
+     */
+    fun <U : Any> mapSuspend(onFulfill: suspend (T) -> U): Promise<U>
+
+    /**
      * Returns a [Promise] that is either fulfilled or rejected with the same value or reason as the original,
      * or rejected after the provided [duration] with a [PromiseTimeoutException].
      *

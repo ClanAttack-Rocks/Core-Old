@@ -11,12 +11,18 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer
 import rocks.clanattack.entry.find
 import rocks.clanattack.util.extention.unit
 import java.util.UUID
+import rocks.clanattack.util.json.JsonDocument as JsonDocumentInterface
 
 
-class JsonDocumentSerializer : StdSerializer<JsonDocument>(JsonDocument::class.java) {
+class JsonDocumentSerializer : StdSerializer<JsonDocumentInterface>(JsonDocumentInterface::class.java) {
 
-    override fun serialize(value: JsonDocument?, gen: JsonGenerator?, provider: SerializerProvider?) =
-        unit { gen?.writeObject(value?.data) }
+    override fun serialize(value: JsonDocumentInterface?, gen: JsonGenerator?, provider: SerializerProvider?) = unit {
+        when (value) {
+            null -> gen?.writeNull()
+            is JsonDocument -> gen?.writeObject(value.data)
+            else -> throw IllegalArgumentException("Cannot serialize ${value::class.java}")
+        }
+    }
 
 }
 
@@ -51,6 +57,9 @@ object JsonDocumentModule : SimpleModule() {
     init {
         addSerializer(JsonDocument::class.java, JsonDocumentSerializer())
         addDeserializer(JsonDocument::class.java, JsonDocumentDeserializer())
+
+        addSerializer(JsonDocumentInterface::class.java, JsonDocumentSerializer())
+        addDeserializer(JsonDocumentInterface::class.java, JsonDocumentDeserializer())
 
         addSerializer(UUID::class.java, UUIDSerializer())
         addDeserializer(UUID::class.java, UUIDDeserializer())

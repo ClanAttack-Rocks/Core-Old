@@ -28,61 +28,61 @@ object ListenerHandler {
     }
 
     fun load() {
-//        find<TaskService>().execute({
-//            detached = true
-//        }) {
-//            find<Logger>().info("Loading listeners...")
-//            AnnotationScanner.getAnnotatedMethods(Listen::class.java).forEach {
-//                val declaringClass = it.declaringClass
-//                try {
-//                    registry.getOrCreate(declaringClass.kotlin)
-//                } catch (e: Exception) {
-//                    find<Logger>().error(
-//                        "Could not create instance of ${declaringClass.name} " +
-//                                "(required for listener ${MethodHelper.getFullName(it)})", e
-//                    )
-//                    return@forEach
-//                }
-//
-//                val listenerData = ListenerData.create(it)
-//                listeners.getOrPut(listenerData.event.kotlin) { mutableListOf() }.add(listenerData)
-//            }
-//
-//            val sortedListeners =
-//                listeners.map { (event, data) -> event to data.sortedBy { it.priority }.toMutableList() }.toMap()
-//            listeners.clear()
-//            sortedListeners.forEach { (event, data) -> listeners[event] = data }
-//
-//            find<Logger>().info("Loaded ${listeners.map { it.value.size }.sum()} listeners.")
-//
-//            find<Logger>().info("Registering events...")
-//            val listener = object : Listener {}
-//            val execute = EventExecutor { _, event -> fireEvent(event) }
-//            var counter = 0
-//
-//            SubTypeScanner.getSubTypesOf(Event::class.java)
-//                .asSequence()
-//                .map { it.asSubclass(Event::class.java) }
-//                .filter { !Modifier.isAbstract(it.modifiers) }
-//                .filter { it.methods.any { method -> method.name == "getHandlers" && method.parameterCount == 0 } }
-//                .filter { shouldRegister(it.kotlin) }
-//                .distinct()
-//                .toList()
-//                .forEach {
-//                    Bukkit.getPluginManager().registerEvent(
-//                        it,
-//                        listener,
-//                        EventPriority.NORMAL,
-//                        execute,
-//                        find()
-//                    )
-//
-//                    counter++
-//                }
-//
-//            find<Logger>().info("Registered $counter events.")
-//            loaded = true
-//        }
+        find<TaskService>().execute({
+            detached = true
+        }) {
+            find<Logger>().info("Loading listeners...")
+            AnnotationScanner.getAnnotatedMethods(Listen::class.java).forEach {
+                val declaringClass = it.declaringClass
+                try {
+                    registry.getOrCreate(declaringClass.kotlin)
+                } catch (e: Exception) {
+                    find<Logger>().error(
+                        "Could not create instance of ${declaringClass.name} " +
+                                "(required for listener ${MethodHelper.getFullName(it)})", e
+                    )
+                    return@forEach
+                }
+
+                val listenerData = ListenerData.create(it)
+                listeners.getOrPut(listenerData.event.kotlin) { mutableListOf() }.add(listenerData)
+            }
+
+            val sortedListeners =
+                listeners.map { (event, data) -> event to data.sortedBy { it.priority }.toMutableList() }.toMap()
+            listeners.clear()
+            sortedListeners.forEach { (event, data) -> listeners[event] = data }
+
+            find<Logger>().info("Loaded ${listeners.map { it.value.size }.sum()} listeners.")
+
+            find<Logger>().info("Registering events...")
+            val listener = object : Listener {}
+            val execute = EventExecutor { _, event -> fireEvent(event) }
+            var counter = 0
+
+            SubTypeScanner.getSubTypesOf(Event::class.java)
+                .asSequence()
+                .map { it.asSubclass(Event::class.java) }
+                .filter { !Modifier.isAbstract(it.modifiers) }
+                .filter { it.methods.any { method -> method.name == "getHandlers" && method.parameterCount == 0 } }
+                .filter { shouldRegister(it.kotlin) }
+                .distinct()
+                .toList()
+                .forEach {
+                    Bukkit.getPluginManager().registerEvent(
+                        it,
+                        listener,
+                        EventPriority.NORMAL,
+                        execute,
+                        find()
+                    )
+
+                    counter++
+                }
+
+            find<Logger>().info("Registered $counter events.")
+            loaded = true
+        }
     }
 
     private fun shouldRegister(klass: KClass<out Event>) =
