@@ -19,7 +19,7 @@ tasks {
             project(":ApiBundle").buildDir.resolve("libs")
                 .listFiles()
                 ?.firstOrNull { !it.nameWithoutExtension.endsWith("-dev") }
-                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("Api.jar"), true)
+                ?.copyTo(rootProject.buildDir.resolve("libs").resolve("api.jar"), true)
         }
     }
 }

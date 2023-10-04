@@ -57,7 +57,7 @@ allprojects {
 }
 
 tasks {
-    register("buildAll") {
-        dependsOn(":Library:build", ":Impl:build", ":ApiBundle:build", ":Test:build")
+    register("buildProject") {
+        dependsOn(":Library:build", ":Impl:build")
     }
 }
