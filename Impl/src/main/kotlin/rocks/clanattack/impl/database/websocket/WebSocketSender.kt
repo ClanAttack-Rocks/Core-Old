@@ -12,6 +12,7 @@ import rocks.clanattack.util.promise.PromiseService
 import java.util.UUID
 import kotlin.reflect.KClass
 import kotlin.reflect.cast
+import kotlin.time.Duration.Companion.seconds
 
 class WebSocketSender(private val websocket: Websocket) {
 
@@ -54,12 +55,6 @@ class WebSocketSender(private val websocket: Websocket) {
         val currentId = id++
 
         find<TaskService>().execute(detached = true) {
-            websocket.send(json {
-                this["id"] = currentId
-                this["method"] = method
-                this["params"] = params
-            })
-
             websocket.addListener {
                 if (it.get<Int>("id") == currentId) {
                     try {
@@ -77,9 +72,19 @@ class WebSocketSender(private val websocket: Websocket) {
                     true
                 } else false
             }
+
+            try {
+                websocket.send(json {
+                    this["id"] = currentId
+                    this["method"] = method
+                    this["params"] = params
+                })
+            } catch (e: Exception) {
+                promise.reject(e)
+            }
         }
 
-        return promise
+        return promise.timeout(10.seconds)
     }
 
     inline fun <reified T : Any> send(method: String, vararg params: Any) = send(method, T::class, *params)

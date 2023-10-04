@@ -1,32 +1,26 @@
 package rocks.clanattack.impl.database
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import io.ktor.http.*
 import org.bukkit.plugin.java.JavaPlugin
 import rocks.clanattack.database.ChangeType
 import rocks.clanattack.database.Patch
 import rocks.clanattack.database.QueryResult
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
-import rocks.clanattack.database.DatabaseService as Interface
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.database.websocket.WebSocketSender
 import rocks.clanattack.impl.database.websocket.Websocket
-import rocks.clanattack.impl.util.json.JsonDocumentModule
+import rocks.clanattack.impl.util.ktor.Ktor
+import rocks.clanattack.task.TaskService
 import rocks.clanattack.util.extention.alsoIf
 import rocks.clanattack.util.json.JsonDocument
 import rocks.clanattack.util.json.get
 import rocks.clanattack.util.json.json
-import rocks.clanattack.util.log.Logger
-import rocks.clanattack.util.promise.Promise
+import rocks.clanattack.util.promise.PromiseService
 import java.util.*
 import kotlin.reflect.KClass
+import rocks.clanattack.database.DatabaseService as Interface
 
-@Register(definition = Interface::class)
+@Register(definition = Interface::class, depends = [TaskService::class, PromiseService::class, Ktor::class])
 class DatabaseService : ServiceImplementation(), Interface {
 
     private val websocket = Websocket()
@@ -56,35 +50,32 @@ class DatabaseService : ServiceImplementation(), Interface {
             }
             .let { json(it) }
 
-        websocket.start(config) {
-            val namespace = config.get<String>("namespace") ?: throw IllegalStateException("No namespace found")
-            val database = config.get<String>("database") ?: throw IllegalStateException("No database found")
+        websocket.start(config).get()
 
-            val auth = config.get<JsonDocument>("authentication")
-                ?: throw IllegalStateException("No authentication found")
+        val namespace = config.get<String>("namespace") ?: throw IllegalStateException("No namespace found")
+        val database = config.get<String>("database") ?: throw IllegalStateException("No database found")
 
-            val type = auth.get<String>("type")
-                ?: throw IllegalStateException("No authentication type found")
+        val auth = config.get<JsonDocument>("authentication")
+            ?: throw IllegalStateException("No authentication found")
 
-            if (type != "root" && type != "namespace" && type != "database")
-                throw IllegalArgumentException("Invalid authentication type: $type")
+        val type = auth.get<String>("type")
+            ?: throw IllegalStateException("No authentication type found")
 
-            val username = auth.get<String>("username") ?: throw IllegalStateException("No username found")
-            val password = auth.get<String>("password") ?: throw IllegalStateException("No password found")
+        if (type != "root" && type != "namespace" && type != "database")
+            throw IllegalArgumentException("Invalid authentication type: $type")
 
-            sender.send<Unit>("signin", json {
-                if (type != "root") this["NS"] = namespace
-                if (type == "database") this["DB"] = database
+        val username = auth.get<String>("username") ?: throw IllegalStateException("No username found")
+        val password = auth.get<String>("password") ?: throw IllegalStateException("No password found")
 
-                this["user"] = username
-                this["pass"] = password
-            }).mapSuspend { sender.send<Unit>("use", namespace, database).await() }
-                .then { find<Logger>().info("Connected to database") }
-                .catch {
-                    find<Logger>().error("Could not connect to database", it)
-                    find<JavaPlugin>().server.shutdown()
-                }
-        }
+        sender.send<Unit>("signin", json {
+            if (type != "root") this["NS"] = namespace
+            if (type == "database") this["DB"] = database
+
+            this["user"] = username
+            this["pass"] = password
+        }).get()
+
+        sender.send<Unit>("use", namespace, database).get()
     }
 
     override fun disable() {
@@ -108,7 +99,10 @@ class DatabaseService : ServiceImplementation(), Interface {
 
     override fun <T : Any> select(thing: String) = sender.send<List<T>>("select", thing)
 
-    override fun <T : Any> create(thing: String, vararg data: T) = sender.send<List<T>>("create", thing, data.toList())
+    override fun <T : Any> create(thing: String, data: T) =
+        sender.send("create", data::class, thing, data).map { it }
+
+    override fun <T : Any> insert(thing: String, vararg data: T) = sender.send<List<T>>("insert", thing, data.toList())
 
     override fun <T : Any> update(thing: String, data: T) =
         sender.send("update", data::class, thing, data).map { it }

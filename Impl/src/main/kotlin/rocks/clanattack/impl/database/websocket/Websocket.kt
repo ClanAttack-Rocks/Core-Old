@@ -7,18 +7,20 @@ import io.ktor.http.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
-import kotlinx.coroutines.isActive
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import rocks.clanattack.entry.find
 import rocks.clanattack.task.TaskService
 import rocks.clanattack.util.extention.unit
-import rocks.clanattack.util.extention.with
 import rocks.clanattack.util.json.JsonDocument
 import rocks.clanattack.util.json.get
 import rocks.clanattack.util.json.json
+import rocks.clanattack.util.log.Logger
 import rocks.clanattack.util.promise.Promise
+import rocks.clanattack.util.promise.PromiseService
 
-class Websocket() {
+class Websocket {
 
     private val listeners = mutableListOf<(JsonDocument) -> Boolean>()
 
@@ -26,7 +28,9 @@ class Websocket() {
     var send: suspend (JsonDocument) -> Unit = { throw IllegalStateException("Websocket not started yet") }
         private set
 
-    fun start(config: JsonDocument, done: () -> Unit) {
+    fun start(config: JsonDocument): Promise<Unit> {
+        val promise = find<PromiseService>().create<Unit>()
+
         val ssl = config.get<Boolean>("ssl") ?: throw IllegalStateException("No ssl found")
         val method = HttpMethod.parse(
             config.get<String>("method") ?: throw IllegalStateException("No method found")
@@ -46,30 +50,33 @@ class Websocket() {
                     path,
                 )
             }) {
-                listener = launch {
-                    try {
-                        for (frame in incoming) {
-                            when (frame) {
-                                is Frame.Text -> json(frame.readText())
-                                    .let { listeners.filter { listener -> listener(it) } }
-                                    .forEach { listeners.remove(it) }
-
-                                is Frame.Binary -> json(frame.readBytes().toString(Charsets.UTF_8))
-                                    .let { listeners.filter { listener -> listener(it) } }
-                                    .forEach { listeners.remove(it) }
-
-                                else -> {}
-                            }
-                        }
-                    } catch (_: ClosedReceiveChannelException) {
-                    }
+                send = {
+                    find<Logger>().info("Sending $it")
+                    send(it.toString())
                 }
 
-                send = { send(it.toString()) }
+                promise.fulfill(Unit)
 
-                done()
+                try {
+                    for (frame in incoming) {
+                        when (frame) {
+                            is Frame.Text -> json(frame.readText())
+                                .let { listeners.filter { listener -> listener(it) } }
+                                .forEach { listeners.remove(it) }
+
+                            is Frame.Binary -> json(frame.readBytes().toString(Charsets.UTF_8))
+                                .let { listeners.filter { listener -> listener(it) } }
+                                .forEach { listeners.remove(it) }
+
+                            else -> {}
+                        }
+                    }
+                } catch (_: ClosedReceiveChannelException) {
+                }
             }
         }
+
+        return promise
     }
 
     fun stop() {
