@@ -24,8 +24,3 @@ jobs:
           port: ${{ secrets.PORT }}
           source: "build/libs/core.jar,build/libs/library.jar"
           target: "/plugins"
-          proxy_host: ${{ secrets.HOST }}
-          proxy_username: ${{ secrets.USERNAME }}
-          proxy_password: ${{ secrets.PASSWORD }}
-          proxy_port: ${{ secrets.PORT }}
-#        run: sshpass -p ${{ secrets.PASSWORD }} scp -P ${{ secrets.PORT }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -C build/libs/core.jar build/libs/library.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/plugins
