@@ -13,13 +13,5 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Execute Gradle build
         run: ./gradlew buildProject --no-daemon
-      - name: Copy JARs
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
-          port: ${{ secrets.PORT }}
-          source: "build/libs/core.jar,build/libs/library.jar"
-          target: /plugins
-          debug: true
+      - name: Copy Files
+        run: sshpass -p ${{ secrets.PASSWORD }} scp -P ${{ secrets.PORT }} build/libs/core.jar build/libs/library.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/plugins
