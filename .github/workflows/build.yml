@@ -14,4 +14,4 @@ jobs:
       - name: Execute Gradle build
         run: ./gradlew buildProject --no-daemon
       - name: Copy Files
-        run: sshpass -p ${{ secrets.PASSWORD }} scp -P ${{ secrets.PORT }} -o StrictHostKeyChecking=no build/libs/core.jar build/libs/library.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/plugins
+        run: sshpass -p ${{ secrets.PASSWORD }} scp -P ${{ secrets.PORT }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null build/libs/core.jar build/libs/library.jar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/plugins
