@@ -36,7 +36,7 @@ object PointHandler {
         find<Logger>().info("Called $amount entry points from $basePackage.")
     }
 
-    private fun callEntryPoints(annotated: List<Method>) = annotated.filter {
+    private fun callEntryPoints(annotated: List<Method>) = annotated.count {
         try {
             MethodHelper.call(it, registry)
             true
@@ -44,7 +44,7 @@ object PointHandler {
             find<Logger>().error("Couldn't call entry point ${MethodHelper.getFullName(it)}", e.invocationCause)
             false
         }
-    }.count()
+    }
 
     fun callExitPoints() {
         find<Logger>().info("Calling exit points...")

@@ -12,6 +12,7 @@ import rocks.clanattack.impl.minecraft.listener.ListenerHandler
 class Boot : JavaPlugin() {
 
     override fun onLoad() {
+        this.logger.info("Loading ClanAttack Core...")
         val registry = Registry(this)
 
         try {
@@ -26,6 +27,7 @@ class Boot : JavaPlugin() {
 
         val loader = registry.create(Loader::class)
         loader.register(this.classLoader, "rocks.clanattack.impl")
+        this.logger.info("Loaded ClanAttack Core.")
     }
 
     override fun onEnable() {
