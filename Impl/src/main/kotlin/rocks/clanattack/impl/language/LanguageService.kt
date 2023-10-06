@@ -17,7 +17,7 @@ import rocks.clanattack.language.LanguageService as Interface
 class LanguageService : ServiceImplementation(), Interface {
 
     override val languages: List<Language>
-        get() = Languages.selectAll().map { Language(it[Languages.id].value) }
+        get() = transaction { Languages.selectAll().map { Language(it[Languages.id].value) } }
 
     override var defaultLanguage: Language
         get() = getLanguage(find<SettingService>().get<String>("core.language.default", "EN"))

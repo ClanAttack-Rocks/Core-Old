@@ -40,7 +40,7 @@ class Replacement(private val language: Language, private val message: String) :
     }
 
     override fun message(placeholder: String, message: String) =
-        component(placeholder, language.getMessage(message))
+        parsed(placeholder, language.getPlainMessage(message))
 
     fun get(): ComponentLike {
         find<LanguageService>().placeholders.forEach { (key, value) -> message(key, value) }

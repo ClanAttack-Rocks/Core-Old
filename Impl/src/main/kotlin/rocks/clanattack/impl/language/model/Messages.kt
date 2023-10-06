@@ -4,7 +4,7 @@ import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import rocks.clanattack.database.CreateTable
 
-@CreateTable
+@CreateTable(1)
 object Messages : IntIdTable("messages") {
 
     val language = reference(
