@@ -20,19 +20,19 @@ interface Language {
     /**
      * The name of the language.
      */
-    val name: String
+    var name: String
 
     /**
      * The skull value of the language.
      *
      * This skull is used to display the language in a GUI.
      */
-    val skull: String
+    var skull: String
 
     /**
      * Whether the language is enabled.
      */
-    val enabled: Boolean
+    var enabled: Boolean
 
     /**
      * Gets a message by its [key] and replaces placeholders with the given [replacement] block.

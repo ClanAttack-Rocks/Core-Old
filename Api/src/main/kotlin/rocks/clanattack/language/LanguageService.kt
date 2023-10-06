@@ -14,6 +14,11 @@ interface LanguageService : Service {
     val languages: List<Language>
 
     /**
+     * The default language.
+     */
+    var defaultLanguage: Language
+
+    /**
      * All global placeholders.
      *
      * Global placeholders are composed of a key-value pair, where both are message keys.
@@ -23,7 +28,10 @@ interface LanguageService : Service {
 
     /**
      * Get a language by its [isoCode].
+     *
+     * @throws IllegalArgumentException If no language with the given [isoCode] exists.
      */
+    @Throws(IllegalArgumentException::class)
     fun getLanguage(isoCode: String): Language
 
     /**
