@@ -73,3 +73,22 @@ inline fun <T : Any?> unit(block: () -> T) { block() }
  * @return the result of the block
  */
 inline fun <T : Any, R : Any?> T.with(block: T.() -> R): R = block()
+
+/**
+ * Loops for the given amount of times, while parsing the current index to the block and
+ * a stop function, which can be called to stop the loop and
+ * returns the amount of times the loop was executed
+ */
+inline fun loop(times: Int, block: (Int, () -> Unit) -> Unit): Int {
+    var tries = 0
+    var stop = false
+
+    for (i in 0..<times) {
+        block(i) { stop = true }
+        tries++
+
+        if (stop) break
+    }
+
+    return tries
+}

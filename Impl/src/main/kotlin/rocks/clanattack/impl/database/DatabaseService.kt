@@ -1,30 +1,26 @@
 package rocks.clanattack.impl.database
 
 import org.bukkit.plugin.java.JavaPlugin
-import rocks.clanattack.database.ChangeType
-import rocks.clanattack.database.Patch
-import rocks.clanattack.database.QueryResult
 import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
-import rocks.clanattack.impl.database.websocket.WebSocketSender
-import rocks.clanattack.impl.database.websocket.Websocket
-import rocks.clanattack.impl.util.ktor.Ktor
-import rocks.clanattack.task.TaskService
 import rocks.clanattack.util.extention.alsoIf
+import rocks.clanattack.util.json.json
+import rocks.clanattack.database.DatabaseService as Interface
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.transactions.transaction
+import rocks.clanattack.database.CreateTable
+import rocks.clanattack.java.AnnotationScanner
+import rocks.clanattack.java.ClassHelper
+import rocks.clanattack.util.extention.loop
 import rocks.clanattack.util.json.JsonDocument
 import rocks.clanattack.util.json.get
-import rocks.clanattack.util.json.json
-import rocks.clanattack.util.promise.PromiseService
-import java.util.*
-import kotlin.reflect.KClass
-import rocks.clanattack.database.DatabaseService as Interface
+import rocks.clanattack.util.log.Logger
 
-@Register(definition = Interface::class, depends = [TaskService::class, PromiseService::class, Ktor::class])
+@Register(definition = Interface::class)
 class DatabaseService : ServiceImplementation(), Interface {
-
-    private val websocket = Websocket()
-    private val sender = WebSocketSender(websocket)
 
     override fun enable() {
         val config = find<JavaPlugin>().dataFolder
@@ -32,86 +28,113 @@ class DatabaseService : ServiceImplementation(), Interface {
             .alsoIf({ !it.exists() }) {
                 it.parentFile.mkdirs()
                 json {
-                    this["ssl"] = false
-                    this["method"] = "GET"
-                    this["host"] = "localhost"
-                    this["port"] = 8000
-                    this["path"] = "rpc"
+                    this["jdbcUrl"] = "jdbc:mysql://[host]:[port]/[database]"
+                    this["username"] = "username"
+                    this["password"] = "password"
 
-                    this["namespace"] = "clanattack"
-                    this["database"] = "production"
-
-                    this["authentication"] = json {
-                        this["type"] = "root"
-                        this["username"] = "root"
-                        this["password"] = "password"
-                    }
+                    this["connectionTimeout"] = 30000
+                    this["idleTimeout"] = 600000
+                    this["maxLifetime"] = 1800000
+                    this["minimumIdle"] = 3
+                    this["maximumPoolSize"] = 20
                 }.write(it, pretty = true)
             }
             .let { json(it) }
 
-        websocket.start(config).get()
+        val dataSource = HikariDataSource(HikariConfig().apply {
+            modify(config)
+            validate()
+        })
 
-        val namespace = config.get<String>("namespace") ?: throw IllegalStateException("No namespace found")
-        val database = config.get<String>("database") ?: throw IllegalStateException("No database found")
+        find<Logger>().info("Connected to database...")
+        Database.connect(dataSource)
+        find<Logger>().info("Connected to database!")
 
-        val auth = config.get<JsonDocument>("authentication")
-            ?: throw IllegalStateException("No authentication found")
-
-        val type = auth.get<String>("type")
-            ?: throw IllegalStateException("No authentication type found")
-
-        if (type != "root" && type != "namespace" && type != "database")
-            throw IllegalArgumentException("Invalid authentication type: $type")
-
-        val username = auth.get<String>("username") ?: throw IllegalStateException("No username found")
-        val password = auth.get<String>("password") ?: throw IllegalStateException("No password found")
-
-        sender.send<Unit>("signin", json {
-            if (type != "root") this["NS"] = namespace
-            if (type == "database") this["DB"] = database
-
-            this["user"] = username
-            this["pass"] = password
-        }).get()
-
-        sender.send<Unit>("use", namespace, database).get()
+        migrate()
     }
 
-    override fun disable() {
-        sender.send<Unit>("invalidate")
-            .then { websocket.stop() }
+    private fun HikariConfig.modify(config: JsonDocument) {
+        jdbcUrl = config.get<String>("jdbcUrl") ?: throw IllegalStateException("jdbcUrl in database.json is not set")
+
+        username = config.get<String>("username") ?: throw IllegalStateException("username in database.json is not set")
+        password = config.get<String>("password") ?: throw IllegalStateException("password in database.json is not set")
+
+        connectionTimeout = config.get<Long>("connectionTimeout")
+            ?: throw IllegalStateException("connectionTimeout in database.json is not set")
+        idleTimeout = config.get<Long>("idleTimeout")
+            ?: throw IllegalStateException("idleTimeout in database.json is not set")
+        maxLifetime = config.get<Long>("maxLifetime")
+            ?: throw IllegalStateException("maxLifetime in database.json is not set")
+        minimumIdle =
+            config.get<Int>("minimumIdle") ?: throw IllegalStateException("minimumIdle in database.json is not set")
+        maximumPoolSize = config.get<Int>("maximumPoolSize")
+            ?: throw IllegalStateException("maximumPoolSize in database.json is not set")
+
+        poolName = config.get<String>("poolName", "HikariCP")
+
+        addDataSourceProperty("cachePrepStmts", config.get<Boolean>("cachePrepStmts", true))
+        addDataSourceProperty("prepStmtCacheSize", config.get<Int>("prepStmtCacheSize", 250))
+        addDataSourceProperty("prepStmtCacheSqlLimit", config.get("prepStmtCacheSqlLimit", 2048))
+        addDataSourceProperty("useServerPrepStmts", config.get("useServerPrepStmts", true))
+        addDataSourceProperty("useLocalSessionState", config.get("useLocalSessionState", true))
+        addDataSourceProperty("rewriteBatchedStatements", config.get("rewriteBatchedStatements", true))
+        addDataSourceProperty("cacheResultSetMetadata", config.get("cacheResultSetMetadata", true))
+        addDataSourceProperty("cacheServerConfiguration", config.get("cacheServerConfiguration", true))
+        addDataSourceProperty("elideSetAutoCommits", config.get("elideSetAutoCommits", true))
+        addDataSourceProperty("maintainTimeStats", config.get("maintainTimeStats", false))
+        addDataSourceProperty("autoReconnect", config.get("autoReconnect", true))
     }
 
-    override fun <T : Any> liveQuery(
-        table: String,
-        type: KClass<T>,
-        callback: (ChangeType, String, T?) -> Unit
-    ) = sender.send<UUID>("live", table, false)
-        .then { sender.addLiveListener(it, type, callback) }
+    override fun migrate(fresh: Boolean) {
+        find<Logger>().info("Migrating database ${if (fresh) "(fresh)" else ""}...")
 
-    override fun killLiveQuery(id: UUID) = sender.send<Unit>("kill", id)
+        if (fresh) clear()
 
-    override fun <T : Any> query(
-        query: String,
-        args: Map<String, String>
-    ) = sender.send<List<QueryResult<T>>>("query", query, args)
+        val tables = findTables()
+        find<Logger>().info("Found ${tables.size} tables to migrate...")
+        transaction { SchemaUtils.createMissingTablesAndColumns(*tables.toTypedArray()) }
 
-    override fun <T : Any> select(thing: String) = sender.send<List<T>>("select", thing)
+        find<Logger>().info("Migrated database!")
+    }
 
-    override fun <T : Any> create(thing: String, data: T) =
-        sender.send("create", data::class, thing, data).map { it }
+    override fun wipe() {
+        find<Logger>().info("Wiping database...")
+        clear()
+        find<Logger>().info("Wiped database!")
+    }
 
-    override fun <T : Any> insert(thing: String, vararg data: T) = sender.send<List<T>>("insert", thing, data.toList())
+    private fun clear() {
+        find<Logger>().info("Clearing tables...")
+        val tables = findTables()
 
-    override fun <T : Any> update(thing: String, data: T) =
-        sender.send("update", data::class, thing, data).map { it }
+        val tries = loop(3) { i, stop ->
+            try {
+                transaction {
+                    tables
+                        .filter { it.exists() }
+                        .forEach { it.deleteAll() }
+                }
 
-    override fun <T : Any, P : Any> merge(thing: String, merge: T) =
-        sender.send<List<P>>("merge", thing, merge)
+                stop()
+            } catch (e: Exception) {
+                if (i == 2) {
+                    find<Logger>().error("Failed to clear tables (retried 3 times), giving up...")
+                    throw e
+                }
 
-    override fun <T : Any> patch(thing: String, patches: List<Patch>) =
-        sender.send<List<T>>("patch", thing, patches, false)
+                find<Logger>().warn("Failed to clear tables! Retrying... (${i + 1}/3)")
+            }
+        }
 
-    override fun delete(thing: String) = sender.send<Unit>("delete", thing)
+        find<Logger>().info("Cleared tables after $tries try/tries!")
+
+        find<Logger>().info("Dropping tables...")
+        transaction { SchemaUtils.drop(*tables.toTypedArray()) }
+        find<Logger>().info("Dropped tables!")
+    }
+
+    private fun findTables() = AnnotationScanner.getAnnotatedClasses(CreateTable::class.java)
+        .map { ClassHelper.createInstance(it) }
+        .filterIsInstance<Table>()
+
 }

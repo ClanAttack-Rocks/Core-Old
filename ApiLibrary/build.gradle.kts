@@ -10,6 +10,11 @@ dependencies {
     api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     api("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 
+    // Exposed
+    api("org.jetbrains.exposed:exposed-core:0.44.0")
+    api("org.jetbrains.exposed:exposed-kotlin-datetime:0.44.0")
+
+
     // Minecraft
     api("com.github.stefvanschie.inventoryframework:IF:0.10.11")
     api("me.catcoder:bukkit-sidebar:6.2.3-SNAPSHOT")
