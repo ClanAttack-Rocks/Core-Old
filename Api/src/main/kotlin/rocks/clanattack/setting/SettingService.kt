@@ -53,3 +53,18 @@ interface SettingService : Service {
     operator fun <T : Any> get(key: String, type: KClass<T>, default: T): T
 
 }
+
+
+/**
+ * Gets the value of a setting and maps it to the given [type][T].
+ *
+ * Returns `null` if no setting with the given [key] exists.
+ */
+inline operator fun <reified T : Any> SettingService.get(key: String) = get(key, T::class)
+
+/**
+ * Gets the value of a setting and maps it to the given [type][T].
+ *
+ * Returns the given [default] if no setting with the given [key] exists.
+ */
+inline operator fun <reified T : Any> SettingService.get(key: String, default: T) = get(key, T::class, default)
