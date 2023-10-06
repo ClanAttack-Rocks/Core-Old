@@ -22,6 +22,7 @@ import rocks.clanattack.util.log.Logger
 @Register(definition = Interface::class)
 class DatabaseService : ServiceImplementation(), Interface {
 
+    @OptIn(ExperimentalKeywordApi::class)
     override fun enable() {
         val config = find<JavaPlugin>().dataFolder
             .resolve("database.json")
@@ -48,6 +49,10 @@ class DatabaseService : ServiceImplementation(), Interface {
 
         find<Logger>().info("Connected to database...")
         Database.connect(dataSource)
+
+        DatabaseConfig {
+            preserveKeywordCasing = true
+        }
         find<Logger>().info("Connected to database!")
 
         migrate()
