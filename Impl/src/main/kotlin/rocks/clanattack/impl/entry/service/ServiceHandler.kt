@@ -56,9 +56,7 @@ object ServiceHandler {
 
             val definition = annotation.definition
             if (!definition.java.isAssignableFrom(it)) {
-                find<Logger>().error(
-                    "The service ${it.name} doesn't implement its definition (${definition.qualifiedName})"
-                )
+                find<Logger>().error("The service ${it.name} doesn't implement its definition (${it.name})")
                 return@filter false
             }
 
@@ -69,6 +67,7 @@ object ServiceHandler {
                 return@filter false
             }
 
+            find<Logger>().info("Registered service ${it.simpleName} (in ${it.packageName})")
             services[definition] = ServiceInformation(instance as ServiceImplementation, annotation)
             true
         }
@@ -96,25 +95,31 @@ object ServiceHandler {
                 break
             }
 
-            untouchedServices.forEach { (definition, info) ->
-                if (info.annotation.depends.all { services[it]?.implementation?.enabled == true }) {
+            untouchedServices
+                .filter { (_, info) -> info.annotation.depends.all { services[it]?.implementation?.enabled == true } }
+                .forEach { (definition, info) ->
                     try {
+                        find<Logger>().info("Enabling ${definition.simpleName} (in ${definition.java.packageName})...")
+
                         info.implementation.enable()
                         ServiceHelper.setEnabled(info.implementation, true)
                         enabled++
+
+                        find<Logger>().info("Enabled ${definition.simpleName}.")
                     } catch (e: Exception) {
                         find<Logger>().error(
-                            "An error occurred while enabling ${definition.qualifiedName}.",
+                            "An error occurred while enabling ${definition.simpleName}.",
                             e.invocationCause
                         )
                     }
 
                     modified.add(definition)
                 }
-            }
 
-            if (modified.isEmpty()) fails++
-            else fails = 0
+            if (modified.isEmpty()) {
+                find<Logger>().warn("No services could be enabled (${untouchedServices.size} left, retrying ${3 - fails} more times).")
+                fails++
+            } else fails = 0
 
             modified.forEach { untouchedServices.remove(it) }
             modified.clear()
@@ -143,12 +148,17 @@ object ServiceHandler {
                 break
             }
 
-            untouchedServices.forEach { (definition, info) ->
-                if (info.annotation.depends.all { services[it]?.implementation?.enabled != true }) {
+            untouchedServices
+                .filter { (_, info) -> info.annotation.depends.all { services[it]?.implementation?.enabled == false } }
+                .forEach { (definition, info) ->
                     try {
+                        find<Logger>().info("Disabling ${definition.qualifiedName}...")
+
                         info.implementation.disable()
                         ServiceHelper.setEnabled(info.implementation, false)
                         disabled++
+
+                        find<Logger>().info("Disabled ${definition.qualifiedName}.")
                     } catch (e: Exception) {
                         find<Logger>().error(
                             "An error occurred while disabling ${definition.qualifiedName}.",
@@ -158,10 +168,11 @@ object ServiceHandler {
 
                     modified.add(definition)
                 }
-            }
 
-            if (modified.isEmpty()) fails++
-            else fails = 0
+            if (modified.isEmpty()) {
+                find<Logger>().warn("No services could be disabled (${untouchedServices.size} left, retrying ${3 - fails} more times).")
+                fails++
+            } else fails = 0
 
             modified.forEach { untouchedServices.remove(it) }
             modified.clear()
