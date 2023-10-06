@@ -22,7 +22,6 @@ import rocks.clanattack.util.log.Logger
 @Register(definition = Interface::class)
 class DatabaseService : ServiceImplementation(), Interface {
 
-    @OptIn(ExperimentalKeywordApi::class)
     override fun enable() {
         val config = find<JavaPlugin>().dataFolder
             .resolve("database.json")
@@ -50,6 +49,7 @@ class DatabaseService : ServiceImplementation(), Interface {
         find<Logger>().info("Connected to database...")
         Database.connect(dataSource)
 
+        @OptIn(ExperimentalKeywordApi::class)
         DatabaseConfig {
             preserveKeywordCasing = true
         }
@@ -110,7 +110,7 @@ class DatabaseService : ServiceImplementation(), Interface {
 
     private fun clear() {
         find<Logger>().info("Clearing tables...")
-        val tables = findTables()
+        val tables = findTables().reversed()
 
         val tries = loop(3) { i, stop ->
             try {
@@ -139,6 +139,7 @@ class DatabaseService : ServiceImplementation(), Interface {
     }
 
     private fun findTables() = AnnotationScanner.getAnnotatedClasses(CreateTable::class.java)
+        .sortedBy { it.getDeclaredAnnotation(CreateTable::class.java).order }
         .map { ClassHelper.createInstance(it) }
         .filterIsInstance<Table>()
 
