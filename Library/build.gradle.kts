@@ -31,6 +31,7 @@ dependencies {
     api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 
     // Exposed
+    api("org.jetbrains.exposed:exposed-jdbc:0.44.0")
     api("com.zaxxer:HikariCP:5.0.1")
     api("org.mariadb.jdbc:mariadb-java-client:3.2.0")
 

@@ -13,6 +13,7 @@ import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import rocks.clanattack.database.CreateTable
 import rocks.clanattack.java.AnnotationScanner
+import rocks.clanattack.java.ClassHelper
 import rocks.clanattack.util.extention.loop
 import rocks.clanattack.util.json.JsonDocument
 import rocks.clanattack.util.json.get
@@ -132,6 +133,8 @@ class DatabaseService : ServiceImplementation(), Interface {
         find<Logger>().info("Dropped tables!")
     }
 
-    private fun findTables() = AnnotationScanner.getAnnotatedClasses(CreateTable::class.java).filterIsInstance<Table>()
+    private fun findTables() = AnnotationScanner.getAnnotatedClasses(CreateTable::class.java)
+        .map { ClassHelper.createInstance(it) }
+        .filterIsInstance<Table>()
 
 }
