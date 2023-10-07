@@ -14,6 +14,8 @@ dependencies {
     api("org.jetbrains.exposed:exposed-core:0.44.0")
     api("org.jetbrains.exposed:exposed-kotlin-datetime:0.44.0")
 
+    // Json
+    api("com.fasterxml.jackson.core:jackson-databind:2.15.2")
 
     // Minecraft
     api("com.github.stefvanschie.inventoryframework:IF:0.10.11")

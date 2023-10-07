@@ -1,17 +1,10 @@
 package rocks.clanattack.impl.util.json
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import rocks.clanattack.impl.util.json.module.adventure.AdventureModule
-import rocks.clanattack.impl.util.json.module.datetime.DateTimeModule
-import rocks.clanattack.impl.util.json.module.document.JsonDocumentModule
-import rocks.clanattack.impl.util.json.module.duration.DurationModule
-import rocks.clanattack.impl.util.json.module.uuid.UUIDModule
+import rocks.clanattack.entry.find
+import rocks.clanattack.impl.util.serialization.SerializationService
 import rocks.clanattack.util.extention.alsoIf
 import rocks.clanattack.util.extention.unit
 import java.io.File
@@ -40,13 +33,13 @@ class JsonDocument(
     private fun notifyChange() = unit { listeners.forEach { it(this) } }
 
     override fun print(stream: OutputStream, pretty: Boolean) {
-        if (pretty) mapper.writerWithDefaultPrettyPrinter().writeValue(stream, data)
-        else mapper.writeValue(stream, data)
+        if (pretty) find<SerializationService>().mapper.writerWithDefaultPrettyPrinter().writeValue(stream, data)
+        else find<SerializationService>().mapper.writeValue(stream, data)
     }
 
     override fun write(file: File, pretty: Boolean) {
-        if (pretty) mapper.writerWithDefaultPrettyPrinter().writeValue(file, data)
-        else mapper.writeValue(file, data)
+        if (pretty) find<SerializationService>().mapper.writerWithDefaultPrettyPrinter().writeValue(file, data)
+        else find<SerializationService>().mapper.writeValue(file, data)
     }
 
     override fun clone() = JsonDocument(data.toMutableMap())
@@ -60,7 +53,7 @@ class JsonDocument(
     override fun contains(key: String) = key in data
 
     override fun <T : Any> get(key: String, type: KClass<T>) = data[key]
-        ?.let { mapper.convertValue(it, type.java) }
+        ?.let { find<SerializationService>().mapper.convertValue(it, type.java) }
         ?.alsoIf({ it is JsonDocument }) {
             (it as JsonDocument).origin = this
             it.originKey = key
@@ -76,7 +69,7 @@ class JsonDocument(
             }
             ?.elements()
             ?.asSequence()
-            ?.map { mapper.convertValue(it, type.java) }
+            ?.map { find<SerializationService>().mapper.convertValue(it, type.java) }
             ?.toList()
 
     override fun <T : Any> getList(key: String, default: List<T>, type: KClass<T>) = getList(key, type) ?: default
@@ -89,13 +82,13 @@ class JsonDocument(
             }
             ?.fields()
             ?.asSequence()
-            ?.map { it.key to mapper.convertValue(it.value, type.java) }
+            ?.map { it.key to find<SerializationService>().mapper.convertValue(it.value, type.java) }
             ?.toMap()
 
     override fun <T : Any> getMap(key: String, default: Map<String, T>, type: KClass<T>) = getMap(key, type) ?: default
 
     override fun set(key: String, value: Any?) {
-        data[key] = mapper.valueToTree(value)
+        data[key] = find<SerializationService>().mapper.valueToTree(value)
         notifyChange()
     }
 
@@ -110,32 +103,10 @@ class JsonDocument(
     }
 
     override fun toString(pretty: Boolean): String =
-        if (pretty) mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)
-        else mapper.writeValueAsString(data)
+        if (pretty) find<SerializationService>().mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data)
+        else find<SerializationService>().mapper.writeValueAsString(data)
 
     override fun toString() = toString(false)
-
-    companion object {
-
-        val mapper: ObjectMapper by lazy {
-            ObjectMapper().registerModules(
-                KotlinModule.Builder()
-                    .withReflectionCacheSize(512)
-                    .configure(KotlinFeature.NullToEmptyCollection, false)
-                    .configure(KotlinFeature.NullToEmptyMap, false)
-                    .configure(KotlinFeature.NullIsSameAsDefault, false)
-                    .configure(KotlinFeature.SingletonSupport, false)
-                    .configure(KotlinFeature.StrictNullChecks, false)
-                    .build(),
-                AdventureModule,
-                DateTimeModule,
-                JsonDocumentModule,
-                DurationModule,
-                UUIDModule,
-            ).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-        }
-
-    }
 
 
 }

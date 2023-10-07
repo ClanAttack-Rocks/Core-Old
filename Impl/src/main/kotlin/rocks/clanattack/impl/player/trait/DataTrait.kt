@@ -3,9 +3,10 @@ package rocks.clanattack.impl.player.trait
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import rocks.clanattack.player.Player
+import rocks.clanattack.entry.find
 import rocks.clanattack.impl.player.model.PlayerData
-import rocks.clanattack.impl.util.json.JsonDocument
+import rocks.clanattack.player.Player
+import rocks.clanattack.util.serialization.SerializationService
 import kotlin.reflect.KClass
 import rocks.clanattack.player.trait.DataTrait as Interface
 
@@ -25,13 +26,13 @@ class DataTrait(private val player: Player) : Interface {
         transaction {
             if (PlayerData.select { PlayerData.player eq player.uuid and (PlayerData.key eq key) }.count() > 0) {
                 PlayerData.update({ PlayerData.player eq player.uuid and (PlayerData.key eq key) }) {
-                    it[PlayerData.value] = JsonDocument.mapper.writeValueAsString(value)
+                    it[PlayerData.value] = find<SerializationService>().serialize(value)
                 }
             } else {
                 PlayerData.insert {
                     it[player] = this@DataTrait.player.uuid
                     it[PlayerData.key] = key
-                    it[PlayerData.value] = JsonDocument.mapper.writeValueAsString(value)
+                    it[PlayerData.value] = find<SerializationService>().serialize(value)
                 }
             }
         }
@@ -40,7 +41,7 @@ class DataTrait(private val player: Player) : Interface {
     override fun <T : Any> get(key: String, type: KClass<T>) = transaction {
         PlayerData.select { PlayerData.player eq player.uuid and (PlayerData.key eq key) }
             .firstOrNull()
-            ?.let { JsonDocument.mapper.readValue(it[PlayerData.value], type.java) }
+            ?.let { find<SerializationService>().deserialize(it[PlayerData.value], type) }
     }
 
     override fun <T : Any> get(key: String, type: KClass<T>, default: T) = get(key, type) ?: default
@@ -59,7 +60,7 @@ class DataTrait(private val player: Player) : Interface {
 
     override fun remove(key: String) {
         transaction {
-            PlayerData.deleteWhere { PlayerData.player eq this@DataTrait.player.uuid and (PlayerData.key eq key) }
+            PlayerData.deleteWhere { player eq this@DataTrait.player.uuid and (PlayerData.key eq key) }
         }
     }
 
