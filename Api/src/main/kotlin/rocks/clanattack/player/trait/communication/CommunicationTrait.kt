@@ -25,11 +25,15 @@ interface CommunicationTrait {
 
     /**
      * The header of the player list, `null` if not set.
+     *
+     * This can not be set to `null`.
      */
     var playerListHeader: ComponentLike?
 
     /**
      * The footer of the player list, `null` if not set.
+     *
+     * This can not be set to `null`.
      */
     var playerListFooter: ComponentLike?
 
@@ -48,18 +52,6 @@ interface CommunicationTrait {
      * @see Replacement
      */
     fun sendMessage(key: String, replacement: Replacement.() -> Unit = {})
-
-    /**
-     * Sends a message to the player over discord.
-     *
-     * The message will be translated using the players [language].
-     *
-     * The function will return `true` if the message was sent successfully, `false` otherwise.
-     *
-     * @see Replacement
-     */
-    @Deprecated(message = "Use DiscordTrait#sendMessage instead.", level = DeprecationLevel.ERROR)
-    fun sendDiscordMessage(key: String, replacement: Replacement.() -> Unit = {}): Boolean
 
     /**
      * Sends an actionbar to the player.
@@ -152,17 +144,17 @@ interface CommunicationTrait {
      *
      * @see Sound.Emitter.self
      */
-    fun playSound(sound: Sound, volume: Float = 1f, pitch: Float = 1f, emitter: Sound.Emitter? = null)
+    fun playSound(sound: Sound, emitter: Sound.Emitter? = null)
 
     /**
      * Play a sound to the player at the given [location].
      */
-    fun playSound(sound: Sound, location: Location, volume: Float = 1f, pitch: Float = 1f)
+    fun playSound(sound: Sound, location: Location)
 
     /**
      * Play a sound to the player at the given [x], [y] and [z] coordinates.
      */
-    fun playSound(sound: Sound, x: Double, y: Double, z: Double, volume: Float = 1f, pitch: Float = 1f)
+    fun playSound(sound: Sound, x: Double, y: Double, z: Double)
 
     /**
      * Stop a sound for the player.
@@ -173,11 +165,6 @@ interface CommunicationTrait {
      * Stops a group of sounds for the player.
      */
     fun stopSound(sound: SoundStop)
-
-    /**
-     * Stops all sounds of the given [category] for the player.
-     */
-    fun stopSound(category: SoundCategory)
 
     /**
      * Stops all sounds for the player.
