@@ -1,6 +1,7 @@
 package rocks.clanattack.player.trait
 
-import io.ktor.network.sockets.*
+import kotlinx.datetime.LocalDateTime
+import java.net.InetSocketAddress
 import kotlin.time.Duration
 
 /**
@@ -18,6 +19,16 @@ interface ConnectionTrait {
      * The time the player has spent on the server.
      */
     val onlineTime: Duration
+
+    /**
+     * The time the player joined the server or `null` if the player is offline.
+     */
+    val joined: LocalDateTime?
+
+    /**
+     * The duration the player has been online (since [joined]) or `null` if the player is offline.
+     */
+    val onlineDuration: Duration?
 
     /**
      * The current ping of the player, or `null` if the player is offline.

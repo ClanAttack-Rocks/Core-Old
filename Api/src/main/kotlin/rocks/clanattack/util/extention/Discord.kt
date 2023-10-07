@@ -8,3 +8,9 @@ import dev.kord.common.entity.Snowflake
 @Suppress("unused")
 val Long.snowflake
     get() = Snowflake(this)
+
+/**
+ * Converts this [ULong] to a [Snowflake].
+ */
+val ULong.snowflake
+    get() = Snowflake(this)

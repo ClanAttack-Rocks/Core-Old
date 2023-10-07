@@ -20,6 +20,11 @@ interface BossBar {
     val player: Player
 
     /**
+     * The id of the [BossBar].
+     */
+    val id: String
+
+    /**
      * The key of the [BossBar].
      */
     val key: String
@@ -27,7 +32,7 @@ interface BossBar {
     /**
      * The [Language] the [BossBar] is using.
      */
-    var language: Language
+    val language: Language
 
     /**
      * The name of the [BossBar].

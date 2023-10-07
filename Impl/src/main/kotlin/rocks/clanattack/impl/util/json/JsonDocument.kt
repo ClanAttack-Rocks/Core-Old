@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import rocks.clanattack.impl.util.json.module.adventure.AdventureModule
+import rocks.clanattack.impl.util.json.module.datetime.DateTimeModule
+import rocks.clanattack.impl.util.json.module.document.JsonDocumentModule
+import rocks.clanattack.impl.util.json.module.duration.DurationModule
+import rocks.clanattack.impl.util.json.module.uuid.UUIDModule
 import rocks.clanattack.util.extention.alsoIf
 import rocks.clanattack.util.extention.unit
 import java.io.File
@@ -123,8 +127,11 @@ class JsonDocument(
                     .configure(KotlinFeature.SingletonSupport, false)
                     .configure(KotlinFeature.StrictNullChecks, false)
                     .build(),
-                JavaTimeModule(),
+                AdventureModule,
+                DateTimeModule,
                 JsonDocumentModule,
+                DurationModule,
+                UUIDModule,
             ).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         }
 

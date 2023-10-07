@@ -3,6 +3,7 @@ package rocks.clanattack.player
 import org.bukkit.OfflinePlayer
 import rocks.clanattack.player.trait.ConnectionTrait
 import rocks.clanattack.player.trait.DataTrait
+import rocks.clanattack.player.trait.DiscordTrait
 import org.bukkit.entity.Player as MinecraftPlayer
 import rocks.clanattack.player.trait.DisplayTrait
 import rocks.clanattack.player.trait.communication.CommunicationTrait
@@ -10,6 +11,9 @@ import java.util.*
 
 /**
  * A [Player] is a wrapper around a [MinecraftPlayer] that provides additional functionality.
+ *
+ * The [Player] does not directly store any data, but uses the [DataTrait] instead to do so.
+ * Therefore a [Player] can be created for any uuid, regardless if the player was every online yet or not.
  */
 @Suppress("unused")
 interface Player {
@@ -61,6 +65,13 @@ interface Player {
     val data: DataTrait
 
     /**
+     * The [DiscordTrait] of the player.
+     *
+     * The [DiscordTrait] integrates with every aspect between a player and discord.
+     */
+    val discord: DiscordTrait
+
+    /**
      * The [DisplayTrait] of the player.
      *
      * The [DisplayTrait] is used to get information about how the player is displayed to other players.
@@ -69,6 +80,8 @@ interface Player {
 
     /**
      * Checks if the player has the given [permission].
+     *
+     * If the player is offline, this will always return `false`.
      */
     fun hasPermission(permission: String): Boolean
 
