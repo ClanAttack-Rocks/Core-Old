@@ -17,6 +17,7 @@ import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.setting.SettingService
 import rocks.clanattack.setting.get
 import rocks.clanattack.task.TaskService
+import rocks.clanattack.task.detached
 import rocks.clanattack.util.extention.snowflake
 import rocks.clanattack.util.promise.PromiseService
 import rocks.clanattack.discord.DiscordService as Interface
@@ -37,7 +38,7 @@ class DiscordService : ServiceImplementation(), Interface {
         find<SettingService>().registerSetting("core.discord.guild", 0)
 
         val promise = find<PromiseService>().create<Unit>()
-        find<TaskService>().execute(detached = true) {
+        detached {
             try {
                 _kord = Kord(
                     find<SettingService>().get<String>("core.discord.token")
@@ -73,12 +74,10 @@ class DiscordService : ServiceImplementation(), Interface {
         promise.get()
     }
 
-    override fun disable() {
-        find<TaskService>().execute(detached = true) {
-            _kord?.shutdown()
-            _kord = null
-            _guild = null
-        }
+    override fun disable() = detached {
+        _kord?.shutdown()
+        _kord = null
+        _guild = null
     }
 
 }

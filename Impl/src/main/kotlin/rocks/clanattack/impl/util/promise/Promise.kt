@@ -4,6 +4,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import rocks.clanattack.entry.find
 import rocks.clanattack.impl.task.TaskService
+import rocks.clanattack.task.detached
 import rocks.clanattack.util.promise.PromiseProvider
 import rocks.clanattack.util.promise.PromiseResult
 import rocks.clanattack.util.promise.PromiseService
@@ -167,7 +168,7 @@ class Promise<T : Any>(
                 when (it.state) {
                     PromiseState.FULFILLED -> {
                         try {
-                            find<TaskService>().execute(detached = true) {
+                            detached {
                                 val result = onFulfill(it.value!!)
                                 promise.fulfill(result)
                             }
@@ -195,7 +196,7 @@ class Promise<T : Any>(
             try {
                 val promise = Promise<U>()
 
-                find<TaskService>().execute(detached = true) {
+                detached {
                     val result = onFulfill(value!!)
                     promise.fulfill(result)
                 }
