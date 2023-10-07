@@ -149,7 +149,13 @@ object ServiceHandler {
             }
 
             untouchedServices
-                .filter { (_, info) -> info.annotation.depends.all { services[it]?.implementation?.enabled == false } }
+                .filter { (_, info) ->
+                    services.all {
+                        it.value.annotation.depends.none { depend ->
+                            depend == info.annotation.definition && it.value.implementation.enabled
+                        }
+                    }
+                }
                 .forEach { (definition, info) ->
                     try {
                         find<Logger>().info("Disabling ${definition.qualifiedName}...")
