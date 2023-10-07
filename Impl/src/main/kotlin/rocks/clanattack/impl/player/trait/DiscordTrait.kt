@@ -5,10 +5,10 @@ import dev.vankka.mcdiscordreserializer.discord.DiscordSerializer
 import kotlinx.coroutines.runBlocking
 import rocks.clanattack.entry.find
 import rocks.clanattack.impl.discord.DiscordService
-import rocks.clanattack.impl.task.TaskService
 import rocks.clanattack.language.Replacement
 import rocks.clanattack.player.Player
 import rocks.clanattack.player.trait.get
+import rocks.clanattack.task.promise
 import rocks.clanattack.util.extention.snowflake
 import rocks.clanattack.player.trait.DiscordTrait as Interface
 
@@ -22,7 +22,7 @@ class DiscordTrait(private val player: Player) : Interface {
             else player.data.remove("core.discord.member")
         }
 
-    override fun sendMessage(key: String, replacement: Replacement.() -> Unit) = find<TaskService>().promise {
+    override fun sendMessage(key: String, replacement: Replacement.() -> Unit) = promise {
         if (member == null) throw IllegalStateException("Player is not connected to discord!")
 
         val message = player.communication.language.getMessage(key, replacement)

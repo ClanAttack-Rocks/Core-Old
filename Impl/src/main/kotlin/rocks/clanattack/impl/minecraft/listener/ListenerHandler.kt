@@ -5,15 +5,15 @@ import org.bukkit.event.Event
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
+import rocks.clanattack.entry.find
+import rocks.clanattack.entry.registry
 import rocks.clanattack.java.AnnotationScanner
 import rocks.clanattack.java.MethodHelper
 import rocks.clanattack.java.SubTypeScanner
-import rocks.clanattack.entry.find
-import rocks.clanattack.entry.registry
+import rocks.clanattack.minecraft.listener.Listen
+import rocks.clanattack.task.detached
 import rocks.clanattack.util.extention.invocationCause
 import rocks.clanattack.util.log.Logger
-import rocks.clanattack.minecraft.listener.Listen
-import rocks.clanattack.task.TaskService
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 
@@ -28,9 +28,7 @@ object ListenerHandler {
     }
 
     fun load() {
-        find<TaskService>().execute({
-            detached = true
-        }) {
+        detached {
             find<Logger>().info("Loading listeners...")
             AnnotationScanner.getAnnotatedMethods(Listen::class.java).forEach {
                 val declaringClass = it.declaringClass

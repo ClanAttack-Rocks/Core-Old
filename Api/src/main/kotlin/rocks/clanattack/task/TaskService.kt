@@ -1,6 +1,8 @@
 package rocks.clanattack.task
 
+import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Service
+import rocks.clanattack.util.extention.unit
 import rocks.clanattack.util.promise.Promise
 import java.util.concurrent.CompletableFuture
 import kotlin.time.Duration
@@ -70,3 +72,23 @@ interface TaskService : Service {
     fun <T> asCompletableFuture(block: suspend Task.() -> T): CompletableFuture<T>
 
 }
+
+/**
+ * Executes the given [block] detached once now.
+ */
+fun detached(block: suspend Task.() -> Unit) = unit { find<TaskService>().execute(detached = true, task = block) }
+
+/**
+ * Executes the given [block] attached, not synchronous, once now.
+ */
+fun async(block: suspend Task.() -> Unit) = unit { find<TaskService>().execute(task = block) }
+
+/**
+ * Executes the given [block] attached, synchronous, once now.
+ */
+fun sync(block: suspend Task.() -> Unit) = unit { find<TaskService>().execute(synchronous = true, task = block) }
+
+/**
+ * Executes the given [block] detached, once now and returns the result as a [Promise].
+ */
+fun <T : Any> promise(block: suspend Task.() -> T) = find<TaskService>().promise(block)

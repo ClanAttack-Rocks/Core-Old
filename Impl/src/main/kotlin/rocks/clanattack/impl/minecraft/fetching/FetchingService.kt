@@ -8,12 +8,11 @@ import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.util.ktor.Ktor
-import rocks.clanattack.impl.util.ktor.KtorImplementation
-import rocks.clanattack.task.TaskService
+import rocks.clanattack.task.promise
 import rocks.clanattack.util.json.get
 import rocks.clanattack.util.json.json
-import rocks.clanattack.util.optional.asOptional
 import rocks.clanattack.util.optional.Optional
+import rocks.clanattack.util.optional.asOptional
 import java.util.*
 import rocks.clanattack.minecraft.fetching.FetchingService as Interface
 
@@ -23,7 +22,7 @@ class FetchingService : ServiceImplementation(), Interface {
     private val uuidCache = mutableMapOf<String, UUID>()
     private val nameCache = mutableMapOf<UUID, String>()
 
-    override fun getUuid(name: String) = find<TaskService>().promise {
+    override fun getUuid(name: String) = promise {
         val lowerName = name.lowercase()
         if (lowerName in uuidCache) return@promise uuidCache[name].asOptional()
 
@@ -45,7 +44,7 @@ class FetchingService : ServiceImplementation(), Interface {
         }.asOptional()
     }
 
-    override fun getName(uuid: UUID) = find<TaskService>().promise {
+    override fun getName(uuid: UUID) = promise {
         if (uuid in nameCache) return@promise nameCache[uuid].asOptional()
 
         val response = find<HttpClient>().get("https://sessionserver.mojang.com/session/minecraft/profile/$uuid")
