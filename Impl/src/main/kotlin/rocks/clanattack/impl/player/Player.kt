@@ -3,8 +3,8 @@ package rocks.clanattack.impl.player
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import rocks.clanattack.player.trait.ConnectionTrait
-import rocks.clanattack.player.trait.DataTrait
+import rocks.clanattack.impl.player.trait.ConnectionTrait
+import rocks.clanattack.impl.player.trait.DataTrait
 import rocks.clanattack.player.trait.DiscordTrait
 import rocks.clanattack.player.trait.DisplayTrait
 import rocks.clanattack.player.trait.communication.CommunicationTrait
@@ -18,10 +18,9 @@ class Player(override val uuid: UUID) : Interface {
         get() = Bukkit.getOfflinePlayer(uuid)
     override val communication: CommunicationTrait
         get() = TODO("Not yet implemented")
-    override val connection: ConnectionTrait
-        get() = TODO("Not yet implemented")
-    override val data: DataTrait
-        get() = TODO("Not yet implemented")
+
+    override val connection by lazy { ConnectionTrait(this) }
+    override val data by lazy { DataTrait(this) }
     override val discord: DiscordTrait
         get() = TODO("Not yet implemented")
     override val display: DisplayTrait

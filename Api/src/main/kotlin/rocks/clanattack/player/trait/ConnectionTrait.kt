@@ -1,7 +1,7 @@
 package rocks.clanattack.player.trait
 
-import io.ktor.network.sockets.*
 import kotlinx.datetime.LocalDateTime
+import java.net.InetSocketAddress
 import kotlin.time.Duration
 
 /**
