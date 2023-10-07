@@ -19,6 +19,11 @@ data class Optional<T : Any>(val value: T?) {
     val isPresent: Boolean
         get() = value != null
 
+    /**
+     * Maps the [Optional] to a different type.
+     */
+    fun <R : Any> map(mapper: (T) -> R): Optional<R> = if (isEmpty) empty() else of(mapper(value!!))
+
     companion object {
 
         /**
