@@ -1,5 +1,6 @@
 package rocks.clanattack.util.format
 
+import net.kyori.adventure.text.ComponentLike
 import rocks.clanattack.entry.service.Service
 import rocks.clanattack.language.Language
 import kotlin.time.Duration
@@ -38,11 +39,11 @@ interface DateTimeService : Service {
      * For example, an [accuracy] of 2 would be `2 years and 3 months`,
      * while an [accuracy] of 3 would be `2 years, 3 months and 4 weeks`.
      *
-     * The [accuracy] can be set to -1, to show all units of time,
+     * The [accuracy] can be set to 0, to show all units of time,
      * if a unit of time is 0, it will not be shown.
      *
      * For this a year is expected as 365 days and a month as 30 days.
      */
-    fun formatDuration(duration: Duration, language: Language, accuracy: Int = 2): String
+    fun formatDuration(duration: Duration, language: Language, accuracy: UInt = 2u): ComponentLike
 
 }
