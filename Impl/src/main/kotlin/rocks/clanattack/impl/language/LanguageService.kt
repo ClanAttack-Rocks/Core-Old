@@ -20,16 +20,19 @@ class LanguageService : ServiceImplementation(), Interface {
         get() = transaction { Languages.selectAll().map { Language(it[Languages.id].value) } }
 
     override var defaultLanguage: Language
-        get() = getLanguage(find<SettingService>().get<String>("core.language.default", "EN"))
+
+        get() = getLanguage(find<SettingService>().get<String>("core.language.default", "DE"))
         set(value) { find<SettingService>()["core.language.default"] = value.isoCode }
 
-    private val _placeholders = mutableMapOf<String, String>()
+    private val _placeholders = mutableMapOf(
+        "prefix" to "core.prefix",
+    )
 
     override val placeholders: Map<String, String>
         get() = _placeholders.toMap()
 
     override fun enable() {
-        find<SettingService>().registerSetting("core.language.default", "EN")
+        find<SettingService>().registerSetting("core.language.default", "DE")
     }
 
     override fun getLanguage(isoCode: String): Language {

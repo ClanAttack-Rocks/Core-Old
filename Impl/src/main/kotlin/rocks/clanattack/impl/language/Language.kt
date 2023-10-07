@@ -1,6 +1,7 @@
 package rocks.clanattack.impl.language
 
 import net.kyori.adventure.text.ComponentLike
+import net.kyori.adventure.text.minimessage.MiniMessage
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -34,17 +35,38 @@ class Language(override val isoCode: String) : Interface {
 
     override fun getMessage(key: String, replacement: Replacement.() -> Unit): ComponentLike {
         val message = getPlainMessage(key)
+
+        if (message == null && key == "core.message.unknown") {
+            return MiniMessage.miniMessage()
+                .deserialize("<red>The message <u>core.message.unknown</u> in language <u>$name</u> couldn't be found")
+        }
+
+        if (message == null) {
+            return getMessage("core.message.unknown") {
+                unparsed("key", key)
+                unparsed("language", name)
+            }
+        }
+        
         return Replacement(this, message)
             .apply(replacement)
             .get()
     }
 
-    fun getPlainMessage(key: String) = messageCache[key] ?: transaction {
+
+    fun getMessageWithoutReplacement(key: String): ComponentLike {
+        val message = getPlainMessage(key)
+            ?: return MiniMessage.miniMessage()
+                .deserialize("<red>The message <u>$key</u> in language <u>$name</u> couldn't be found")
+
+        return MiniMessage.miniMessage().deserialize(message)
+    }
+
+    private fun getPlainMessage(key: String) = messageCache[key] ?: transaction {
         Messages.select { Messages.language eq isoCode and (Messages.key eq key) }
             .firstOrNull()
             ?.get(Messages.value)
             ?.also { messageCache[key] = it }
-            ?: "<red>Message with key $key not found</red>"
     }
 
 }
