@@ -45,6 +45,18 @@ class DataTrait(private val player: Player) : Interface {
 
     override fun <T : Any> get(key: String, type: KClass<T>, default: T) = get(key, type) ?: default
 
+    override fun <T : Any> modify(key: String, type: KClass<T>, block: (T?) -> T) {
+        val value = block(get(key, type))
+        val newValue = block(value)
+        set(key, newValue)
+    }
+
+    override fun <T : Any> modify(key: String, type: KClass<T>, default: T, block: (T) -> T) {
+        val value = get(key, type, default)
+        val newValue = block(value)
+        set(key, newValue)
+    }
+
     override fun remove(key: String) {
         transaction {
             PlayerData.deleteWhere { PlayerData.player eq this@DataTrait.player.uuid and (PlayerData.key eq key) }
