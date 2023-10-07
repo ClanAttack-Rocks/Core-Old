@@ -9,13 +9,20 @@ import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.language.LanguageService
 import rocks.clanattack.minecraft.fetching.FetchingService
+import rocks.clanattack.task.TaskService
 import java.util.*
 import java.util.concurrent.TimeUnit
 import rocks.clanattack.player.PlayerService as Interface
 
 @Register(
     definition = Interface::class,
-    depends = [DatabaseService::class, LanguageService::class, DiscordService::class, FetchingService::class]
+    depends = [
+        DatabaseService::class,
+        LanguageService::class,
+        DiscordService::class,
+        FetchingService::class,
+        TaskService::class
+    ]
 )
 class PlayerService : ServiceImplementation(), Interface {
 

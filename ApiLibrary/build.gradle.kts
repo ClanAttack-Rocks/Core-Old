@@ -21,6 +21,7 @@ dependencies {
 
     // Discord
     api("dev.kord:kord-core:0.11.1")
+    api("dev.vankka:mcdiscordreserializer:4.3.0")
 }
 
 tasks{
