@@ -6,10 +6,11 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import rocks.clanattack.database.DatabaseService
+import rocks.clanattack.entry.find
 import rocks.clanattack.entry.service.Register
 import rocks.clanattack.entry.service.ServiceImplementation
 import rocks.clanattack.impl.setting.model.Settings
-import rocks.clanattack.impl.util.json.JsonDocument
+import rocks.clanattack.util.serialization.SerializationService
 import kotlin.reflect.KClass
 import rocks.clanattack.setting.SettingService as Interface
 
@@ -25,7 +26,7 @@ class SettingService : ServiceImplementation(), Interface {
 
             Settings.insert {
                 it[Settings.key] = key
-                it[Settings.value] = JsonDocument.mapper.writeValueAsString(value)
+                it[Settings.value] = find<SerializationService>().serialize(value)
             }
         }
     }
@@ -33,7 +34,7 @@ class SettingService : ServiceImplementation(), Interface {
     override fun set(key: String, value: Any) {
         transaction {
             Settings.update({ Settings.key eq key }) {
-                it[Settings.value] = JsonDocument.mapper.writeValueAsString(value)
+                it[Settings.value] = find<SerializationService>().serialize(value)
             }
         }
     }
@@ -47,7 +48,7 @@ class SettingService : ServiceImplementation(), Interface {
             ?.get(Settings.value)
             ?: return@transaction null
 
-        JsonDocument.mapper.readValue(value, type.java)
+        find<SerializationService>().deserialize(value, type)
     }
 
     override fun <T : Any> get(key: String, type: KClass<T>, default: T) = get(key, type) ?: default
