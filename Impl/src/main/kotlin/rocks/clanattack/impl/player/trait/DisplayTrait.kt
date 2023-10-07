@@ -5,7 +5,7 @@ import net.kyori.adventure.text.ComponentLike
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextColor
 import rocks.clanattack.entry.find
-import rocks.clanattack.impl.player.Player
+import rocks.clanattack.player.Player
 import rocks.clanattack.minecraft.fetching.FetchingService
 import rocks.clanattack.player.trait.get
 import rocks.clanattack.player.trait.DisplayTrait as Interface

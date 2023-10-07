@@ -3,7 +3,7 @@ package rocks.clanattack.impl.player.trait
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import rocks.clanattack.impl.player.Player
+import rocks.clanattack.player.Player
 import rocks.clanattack.impl.player.model.PlayerData
 import rocks.clanattack.impl.util.json.JsonDocument
 import kotlin.reflect.KClass

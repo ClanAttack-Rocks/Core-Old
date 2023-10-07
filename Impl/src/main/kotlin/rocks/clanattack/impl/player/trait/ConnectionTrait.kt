@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import rocks.clanattack.entry.find
-import rocks.clanattack.impl.player.Player
+import rocks.clanattack.player.Player
 import rocks.clanattack.impl.player.PlayerService
 import rocks.clanattack.minecraft.listener.Listen
 import rocks.clanattack.player.trait.get
