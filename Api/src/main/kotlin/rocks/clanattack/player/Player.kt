@@ -3,6 +3,7 @@ package rocks.clanattack.player
 import org.bukkit.OfflinePlayer
 import rocks.clanattack.player.trait.ConnectionTrait
 import rocks.clanattack.player.trait.DataTrait
+import rocks.clanattack.player.trait.DiscordTrait
 import org.bukkit.entity.Player as MinecraftPlayer
 import rocks.clanattack.player.trait.DisplayTrait
 import rocks.clanattack.player.trait.communication.CommunicationTrait
@@ -59,6 +60,13 @@ interface Player {
      * The [DataTrait] is used to store data for a specific player.
      */
     val data: DataTrait
+
+    /**
+     * The [DiscordTrait] of the player.
+     *
+     * The [DiscordTrait] integrates with every aspect between a player and discord.
+     */
+    val discord: DiscordTrait
 
     /**
      * The [DisplayTrait] of the player.

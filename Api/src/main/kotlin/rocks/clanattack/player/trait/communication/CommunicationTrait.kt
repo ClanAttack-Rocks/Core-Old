@@ -58,6 +58,7 @@ interface CommunicationTrait {
      *
      * @see Replacement
      */
+    @Deprecated(message = "Use DiscordTrait#sendMessage instead.", level = DeprecationLevel.ERROR)
     fun sendDiscordMessage(key: String, replacement: Replacement.() -> Unit = {}): Boolean
 
     /**
