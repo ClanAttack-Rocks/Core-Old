@@ -11,6 +11,9 @@ import java.util.*
 
 /**
  * A [Player] is a wrapper around a [MinecraftPlayer] that provides additional functionality.
+ *
+ * The [Player] does not directly store any data, but uses the [DataTrait] instead to do so.
+ * Therefore a [Player] can be created for any uuid, regardless if the player was every online yet or not.
  */
 @Suppress("unused")
 interface Player {
@@ -77,6 +80,8 @@ interface Player {
 
     /**
      * Checks if the player has the given [permission].
+     *
+     * If the player is offline, this will always return `false`.
      */
     fun hasPermission(permission: String): Boolean
 
