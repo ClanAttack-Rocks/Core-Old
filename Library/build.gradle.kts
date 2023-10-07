@@ -28,7 +28,6 @@ dependencies {
     // JSON
     api("com.fasterxml.jackson.core:jackson-databind:2.15.2")
     api("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
-    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
 
     // Exposed
     api("org.jetbrains.exposed:exposed-jdbc:0.44.0")
