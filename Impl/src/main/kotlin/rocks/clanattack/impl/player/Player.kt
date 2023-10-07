@@ -3,10 +3,8 @@ package rocks.clanattack.impl.player
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
-import rocks.clanattack.impl.player.trait.ConnectionTrait
-import rocks.clanattack.impl.player.trait.DataTrait
+import rocks.clanattack.impl.player.trait.*
 import rocks.clanattack.player.trait.DiscordTrait
-import rocks.clanattack.player.trait.DisplayTrait
 import rocks.clanattack.player.trait.communication.CommunicationTrait
 import java.util.*
 import rocks.clanattack.player.Player as Interface
@@ -23,8 +21,8 @@ class Player(override val uuid: UUID) : Interface {
     override val data by lazy { DataTrait(this) }
     override val discord: DiscordTrait
         get() = TODO("Not yet implemented")
-    override val display: DisplayTrait
-        get() = TODO("Not yet implemented")
+
+    override val display by lazy { DisplayTrait(this) }
 
     override fun hasPermission(permission: String) = minecraft?.hasPermission(permission) ?: false
 

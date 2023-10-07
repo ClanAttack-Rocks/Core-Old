@@ -17,8 +17,6 @@ interface DisplayTrait {
 
     /**
      * The color to display the name of the player in.
-     *
-     * If null, [NamedTextColor.GRAY] will be used.
      */
     var color: TextColor?
 
@@ -26,6 +24,8 @@ interface DisplayTrait {
      * The display name of the player.
      *
      * This is always [prefix] + [coloredName] + [suffix].
+     *
+     * If no [prefix] or [suffix] is specified, it will not be displayed.
      */
     val displayName: ComponentLike
 
@@ -33,6 +33,8 @@ interface DisplayTrait {
      * The colored name of the player.
      *
      * This is always the [name] in the [color] specified.
+     *
+     * If no [color] is specified, it will be [NamedTextColor.GRAY].
      */
     val coloredName: ComponentLike
 

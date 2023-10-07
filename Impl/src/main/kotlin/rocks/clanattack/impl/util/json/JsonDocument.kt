@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import rocks.clanattack.impl.util.json.module.adventure.AdventureModule
 import rocks.clanattack.impl.util.json.module.datetime.DateTimeModule
 import rocks.clanattack.impl.util.json.module.document.JsonDocumentModule
 import rocks.clanattack.impl.util.json.module.duration.DurationModule
@@ -126,6 +127,7 @@ class JsonDocument(
                     .configure(KotlinFeature.SingletonSupport, false)
                     .configure(KotlinFeature.StrictNullChecks, false)
                     .build(),
+                AdventureModule,
                 DateTimeModule,
                 JsonDocumentModule,
                 DurationModule,
