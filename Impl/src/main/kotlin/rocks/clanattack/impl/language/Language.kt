@@ -35,6 +35,7 @@ class Language(override val isoCode: String) : Interface {
 
     override fun getMessage(key: String, replacement: Replacement.() -> Unit): ComponentLike {
         val message = getPlainMessage(key)
+
         if (message == null && key == "core.message.unknown") {
             return MiniMessage.miniMessage()
                 .deserialize("<red>The message <u>core.message.unknown</u> in language <u>$name</u> couldn't be found")
@@ -46,11 +47,12 @@ class Language(override val isoCode: String) : Interface {
                 unparsed("language", name)
             }
         }
-
+        
         return Replacement(this, message)
             .apply(replacement)
             .get()
     }
+
 
     fun getMessageWithoutReplacement(key: String): ComponentLike {
         val message = getPlainMessage(key)

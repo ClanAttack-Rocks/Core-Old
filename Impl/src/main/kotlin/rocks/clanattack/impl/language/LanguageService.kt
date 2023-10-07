@@ -20,6 +20,7 @@ class LanguageService : ServiceImplementation(), Interface {
         get() = transaction { Languages.selectAll().map { Language(it[Languages.id].value) } }
 
     override var defaultLanguage: Language
+
         get() = getLanguage(find<SettingService>().get<String>("core.language.default", "DE"))
         set(value) { find<SettingService>()["core.language.default"] = value.isoCode }
 
