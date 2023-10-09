@@ -62,7 +62,7 @@ class Language(override val isoCode: String) : Interface {
         return MiniMessage.miniMessage().deserialize(message)
     }
 
-    private fun getPlainMessage(key: String) = messageCache[key] ?: transaction {
+    fun getPlainMessage(key: String) = messageCache[key] ?: transaction {
         Messages.select { Messages.language eq isoCode and (Messages.key eq key) }
             .firstOrNull()
             ?.get(Messages.value)
