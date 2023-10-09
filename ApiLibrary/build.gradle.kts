@@ -21,6 +21,12 @@ dependencies {
     api("com.github.stefvanschie.inventoryframework:IF:0.10.11")
     api("me.catcoder:bukkit-sidebar:6.2.3-SNAPSHOT")
 
+    // Command
+    api("cloud.commandframework:cloud-core:1.8.4")
+    api("cloud.commandframework:cloud-annotations:1.8.4")
+    api("cloud.commandframework:cloud-paper:1.8.4")
+    api("cloud.commandframework:cloud-minecraft-extras:1.8.4")
+
     // Discord
     api("dev.kord:kord-core:0.11.1")
     api("dev.vankka:mcdiscordreserializer:4.3.0")
