@@ -1,7 +1,6 @@
 package rocks.clanattack.impl.minecraft.command.model
 
 import org.jetbrains.exposed.dao.id.IdTable
-import org.jetbrains.exposed.dao.id.IntIdTable
 import rocks.clanattack.database.CreateTable
 
 @CreateTable(0)
