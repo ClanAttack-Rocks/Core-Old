@@ -62,19 +62,18 @@ class CommandServiceImplementation : ServiceImplementation(), CommandService {
                 })
         }
 
-        detached {
-            find<Logger>().info("Registering commands...")
 
-            val count = AnnotationScanner.getAnnotatedMethods(CommandMethod::class.java)
-                .asSequence()
-                .map { it.declaringClass }
-                .distinct()
-                .map { ClassHelper.createInstance(it) }
-                .onEach { sync { annotationParser.parse(it) } }
-                .count()
+        find<Logger>().info("Registering commands...")
 
-            find<Logger>().info("Registered $count command classes.")
-        }
+        val count = AnnotationScanner.getAnnotatedMethods(CommandMethod::class.java)
+            .asSequence()
+            .map { it.declaringClass }
+            .distinct()
+            .map { ClassHelper.createInstance(it) }
+            .onEach { annotationParser.parse(it) }
+            .count()
+
+        find<Logger>().info("Registered $count command classes.")
     }
 
 }
