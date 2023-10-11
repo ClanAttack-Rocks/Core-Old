@@ -6,7 +6,6 @@ import net.kyori.adventure.text.ComponentLike
 import org.bukkit.Instrument
 import org.bukkit.Location
 import org.bukkit.Note
-import org.bukkit.SoundCategory
 import rocks.clanattack.language.Language
 import rocks.clanattack.language.Replacement
 import kotlin.time.Duration
@@ -52,6 +51,11 @@ interface CommunicationTrait {
      * @see Replacement
      */
     fun sendMessage(key: String, replacement: Replacement.() -> Unit = {})
+
+    /**
+     * Sends a message to the player.
+     */
+    fun sendMessage(message: ComponentLike)
 
     /**
      * Sends an actionbar to the player.

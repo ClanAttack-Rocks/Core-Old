@@ -36,6 +36,10 @@ object ConsoleCommunicationTrait : CommunicationTrait {
             component("message", language.getMessage(key, replacement))
         })
 
+    override fun sendMessage(message: ComponentLike) {
+        Bukkit.getConsoleSender().sendMessage(message)
+    }
+
     override fun sendActionbar(
         key: String,
         duration: Duration,
