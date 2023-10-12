@@ -1,5 +1,5 @@
 group = "rocks.clanattack"
-version = "0.0.0"
+version = "1.0"
 
 repositories {
     maven("https://oss.sonatype.org/content/repositories/snapshots/")
