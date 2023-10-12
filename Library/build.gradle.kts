@@ -3,11 +3,11 @@ plugins {
 }
 
 group = "rocks.clanattack"
-version = "0.0.0"
+version = "1.0"
 
 bukkit {
     main = "rocks.clanattack.library.Library"
-    version = "0.0.0"
+    version = "1.0"
     apiVersion = "1.20"
     name = "Rocks-Library"
 
