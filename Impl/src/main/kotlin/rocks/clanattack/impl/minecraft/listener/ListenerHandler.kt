@@ -6,6 +6,7 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import rocks.clanattack.entry.find
+import rocks.clanattack.entry.point.EntryPoint
 import rocks.clanattack.entry.registry
 import rocks.clanattack.java.AnnotationScanner
 import rocks.clanattack.java.MethodHelper
@@ -23,11 +24,10 @@ object ListenerHandler {
     var loaded = false
         private set
 
-    fun block() {
+    @EntryPoint
+    fun entry() {
         Bukkit.getPluginManager().registerEvents(PlayerLoginListener(), find())
-    }
 
-    fun load() {
         detached {
             find<Logger>().info("Loading listeners...")
             AnnotationScanner.getAnnotatedMethods(Listen::class.java).forEach {
