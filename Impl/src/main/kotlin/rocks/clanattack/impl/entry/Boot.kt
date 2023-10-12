@@ -1,12 +1,11 @@
 package rocks.clanattack.impl.entry
 
 import org.bukkit.plugin.java.JavaPlugin
-import rocks.clanattack.java.RegistryHelper
 import rocks.clanattack.impl.entry.plugin.Loader
 import rocks.clanattack.impl.entry.point.PointHandler
 import rocks.clanattack.impl.entry.service.ServiceHandler
 import rocks.clanattack.impl.util.log.Logger
-import rocks.clanattack.impl.minecraft.listener.ListenerHandler
+import rocks.clanattack.java.RegistryHelper
 
 @Suppress("unused")
 class Boot : JavaPlugin() {
@@ -31,14 +30,10 @@ class Boot : JavaPlugin() {
     }
 
     override fun onEnable() {
-        ListenerHandler.block()
-
         ServiceHandler.registerServices()
         ServiceHandler.enableServices()
 
         PointHandler.callEntryPoints()
-
-        ListenerHandler.load()
     }
 
     override fun onDisable() {
