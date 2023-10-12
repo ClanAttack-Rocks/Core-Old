@@ -52,6 +52,10 @@ class CommunicationTrait(private val player: Player) : Interface {
         player.minecraft?.sendMessage(language.getMessage(key, replacement))
     }
 
+    override fun sendMessage(message: ComponentLike) {
+        player.minecraft?.sendMessage(message)
+    }
+
     override fun sendActionbar(
         key: String,
         duration: Duration,

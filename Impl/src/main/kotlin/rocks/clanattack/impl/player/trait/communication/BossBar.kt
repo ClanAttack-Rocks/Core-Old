@@ -22,6 +22,7 @@ class BossBar(
 
     override val name: ComponentLike
         get() = adventure.name()
+
     override var progress: Float
         get() = adventure.progress()
         set(value) {
